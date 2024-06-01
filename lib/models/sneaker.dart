@@ -1,4 +1,6 @@
 class Sneaker {
+  final String brand;
+  final String model;
   final String name;
   final String imageUrl;
   final double price;
@@ -8,6 +10,8 @@ class Sneaker {
   final bool inFavorites;
 
   Sneaker({
+    required this.brand,
+    required this.model,
     required this.name,
     required this.imageUrl,
     required this.price,

@@ -25,10 +25,24 @@ class ProductCard extends StatelessWidget {
                     maxWidth: 140,
                     maxHeight: 100,
                   ),
-                  child: Image.network(sneaker.imageUrl, fit: BoxFit.cover),
+                  child: Center(
+                    child: Image.asset(sneaker.imageUrl),
+                  ),
                 ),
-                title: Text(sneaker.name, style: TextStyle(fontWeight: FontWeight.w600)),
-                subtitle: Text('\$${sneaker.price.toStringAsFixed(2)}', style: TextStyle(color: const Color(0xFF6F2DFF))),
+                title: Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(sneaker.brand + " " + sneaker.model, style: TextStyle(fontWeight: FontWeight.bold, fontFamily: "Future", fontSize: 16)),
+                  ),
+                subtitle: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                    Text('${sneaker.name}', style: TextStyle(fontWeight: FontWeight.bold, fontFamily: "Future", fontSize: 16)),
+                    Text('\$${sneaker.price.toStringAsFixed(0)}', style: TextStyle(color: const Color(0xFF6F2DFF), fontWeight: FontWeight.bold, fontFamily: "Future", fontSize: 16)),
+                    ],
+                  ),
+                ),
                 
           ),
           Row(

@@ -67,7 +67,7 @@ class Collection extends StatelessWidget {
 
   void addItemsTo(){ // Hier können Produkte hinzugefügt werden
     for (int i = 0; i < 10; i++){
-      sneakers.add(Sneaker(name: "test", imageUrl: "https://i.ibb.co/jgX3RtP/adidas-Ultra-Boost-Disney-Goofy-Product.jpg", price:  320, size:  42, purchasePrice:  250, inCollection:  true, inFavorites:  false));
+      sneakers.add(Sneaker(brand: "Adidas", model: "Ultraboost", name: "Disney Goofy", imageUrl: "assets/images/adidas-Ultra-Boost-Disney-Goofy-Product.jpg", price:  320, size:  42, purchasePrice:  250, inCollection:  true, inFavorites:  false));
     }
   }
 
