@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sneaker_collector/components/navbar.dart';
 import 'package:sneaker_collector/models/sneaker.dart';
+import 'package:sneaker_collector/components/product_card.dart';
 
 class Collection extends StatelessWidget {
   Collection({super.key});
@@ -71,69 +72,3 @@ class Collection extends StatelessWidget {
   }
 
 }
-
-//ProductCard Widget
-
-class ProductCard extends StatelessWidget {
-  final Sneaker sneaker;
-
-  const ProductCard(this.sneaker);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 160,
-        child: Card(
-          color: Colors.white,
-          margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-          
-              ListTile(
-                leading: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minWidth: 140,
-                    minHeight: 100,
-                    maxWidth: 140,
-                    maxHeight: 100,
-                  ),
-                  child: Image.network(sneaker.imageUrl, fit: BoxFit.cover),
-                ),
-                title: Text(sneaker.name, style: TextStyle(fontWeight: FontWeight.w600)),
-                subtitle: Text('\$${sneaker.price.toStringAsFixed(2)}', style: TextStyle(color: const Color(0xFF6F2DFF))),
-                
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              ElevatedButton(
-                onPressed: () {
-                  // Add to Collection
-                },
-                style: ElevatedButton.styleFrom(
-                  shape: CircleBorder(),
-                  padding: EdgeInsets.all(10)
-                ),
-                child: Icon(Icons.star, color: const Color(0xFF6F2DFF)),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  // Add to Favs
-                },
-                style: ElevatedButton.styleFrom(
-                  shape: CircleBorder(), 
-                  padding: EdgeInsets.all(10), 
-                ),
-                child: Icon(Icons.favorite, color: const Color(0xFF6F2DFF)),
-              ),
-            ],
-          )
-            ],
-          ),
-        ),
-    );
-
-  }
-}
-
