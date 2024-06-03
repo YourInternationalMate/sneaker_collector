@@ -92,7 +92,6 @@ class LoginScreen extends StatelessWidget {
 
   void checkLogin(BuildContext context) {
     //Login Check
-    print("${usernameController.text} ${passwordController.text}");
     if (usernameController.text == 'admin' &&
         passwordController.text == 'admin') {
       Navigator.pushReplacementNamed(context, '/collection');

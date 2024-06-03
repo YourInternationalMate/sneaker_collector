@@ -14,81 +14,79 @@ class ProductCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => DetailScreen(sneaker: sneaker)
-            ),
-          );
+              builder: (context) => DetailScreen(sneaker: sneaker)),
+        );
       },
-    
-    child: Container(
-      height: 160,
+      child: Container(
+        height: 160,
         child: Card(
           color: Colors.white,
-          margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+          margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-          
               ListTile(
-                leading: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minWidth: 140,
-                    minHeight: 100,
-                    maxWidth: 140,
-                    maxHeight: 100,
-                  ),
-                  child: Center(
-                    child: Image.asset(sneaker.imageUrl),
-                  ),
-                ),
+                leading: Container(
+                    width: 140,
+                    height: 100,
+                    child: Image.asset(sneaker.imageUrl)), // TODO: Bild zentrieren 
                 title: Align(
                   alignment: Alignment.topLeft,
-                  child: Text(sneaker.brand + " " + sneaker.model, style: TextStyle(fontWeight: FontWeight.bold, fontFamily: "Future", fontSize: 16)),
-                  ),
+                  child: Text(sneaker.brand + " " + sneaker.model,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontFamily: "Future",
+                          fontSize: 16)),
+                ),
                 subtitle: Column(
-                    children: <Widget>[
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: Text('${sneaker.name}', style: TextStyle(fontWeight: FontWeight.bold, fontFamily: "Future", fontSize: 16)),
-                      ),
-                      Align(
-                        alignment: Alignment.bottomLeft,
-                        child: Text('\$${sneaker.price.toStringAsFixed(0)}', style: TextStyle(color: const Color(0xFF6F2DFF), fontWeight: FontWeight.bold, fontFamily: "Future", fontSize: 16)),
-                      ),
-                    ],
+                  children: <Widget>[
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Text(sneaker.name,
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontFamily: "Future",
+                              fontSize: 16)),
+                    ),
+                    Align(
+                      alignment: Alignment.bottomLeft,
+                      child: Text('\$${sneaker.price.toStringAsFixed(0)}',
+                          style: const TextStyle(
+                              color: const Color(0xFF6F2DFF),
+                              fontWeight: FontWeight.bold,
+                              fontFamily: "Future",
+                              fontSize: 16)),
+                    ),
+                  ],
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  ElevatedButton(
+                    onPressed: () {
+                      // Add to Collection
+                    },
+                    style: ElevatedButton.styleFrom(
+                        shape: CircleBorder(), padding: EdgeInsets.all(10)),
+                    child: Icon(Icons.star, color: const Color(0xFF6F2DFF)),
                   ),
-                
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              ElevatedButton(
-                onPressed: () {
-                  // Add to Collection
-                },
-                style: ElevatedButton.styleFrom(
-                  shape: CircleBorder(),
-                  padding: EdgeInsets.all(10)
-                ),
-                child: Icon(Icons.star, color: const Color(0xFF6F2DFF)),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  // Add to Favs
-                },
-                style: ElevatedButton.styleFrom(
-                  shape: CircleBorder(), 
-                  padding: EdgeInsets.all(10), 
-                ),
-                child: Icon(Icons.favorite, color: const Color(0xFF6F2DFF)),
-              ),
-            ],
-          )
+                  ElevatedButton(
+                    onPressed: () {
+                      // Add to Favs
+                    },
+                    style: ElevatedButton.styleFrom(
+                      shape: CircleBorder(),
+                      padding: EdgeInsets.all(10),
+                    ),
+                    child: Icon(Icons.favorite, color: const Color(0xFF6F2DFF)),
+                  ),
+                ],
+              )
             ],
           ),
         ),
-    ),
+      ),
     );
-
   }
 }
-
