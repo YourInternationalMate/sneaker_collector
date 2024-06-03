@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sneaker_collector/models/sneaker.dart';
+import 'package:sneaker_collector/detail_screen.dart';
 
 class ProductCard extends StatelessWidget {
   final Sneaker sneaker;
@@ -8,7 +9,17 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DetailScreen(sneaker: sneaker)
+            ),
+          );
+      },
+    
+    child: Container(
       height: 160,
         child: Card(
           color: Colors.white,
@@ -33,16 +44,18 @@ class ProductCard extends StatelessWidget {
                   alignment: Alignment.topLeft,
                   child: Text(sneaker.brand + " " + sneaker.model, style: TextStyle(fontWeight: FontWeight.bold, fontFamily: "Future", fontSize: 16)),
                   ),
-                subtitle: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
+                subtitle: Column(
                     children: <Widget>[
-                    Text('${sneaker.name}', style: TextStyle(fontWeight: FontWeight.bold, fontFamily: "Future", fontSize: 16)),
-                    Text('\$${sneaker.price.toStringAsFixed(0)}', style: TextStyle(color: const Color(0xFF6F2DFF), fontWeight: FontWeight.bold, fontFamily: "Future", fontSize: 16)),
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Text('${sneaker.name}', style: TextStyle(fontWeight: FontWeight.bold, fontFamily: "Future", fontSize: 16)),
+                      ),
+                      Align(
+                        alignment: Alignment.bottomLeft,
+                        child: Text('\$${sneaker.price.toStringAsFixed(0)}', style: TextStyle(color: const Color(0xFF6F2DFF), fontWeight: FontWeight.bold, fontFamily: "Future", fontSize: 16)),
+                      ),
                     ],
                   ),
-                ),
                 
           ),
           Row(
@@ -73,6 +86,7 @@ class ProductCard extends StatelessWidget {
             ],
           ),
         ),
+    ),
     );
 
   }
