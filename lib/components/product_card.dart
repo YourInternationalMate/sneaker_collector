@@ -65,7 +65,11 @@ class ProductCard extends StatelessWidget {
                 children: <Widget>[
                   ElevatedButton(
                     onPressed: () {
-                      // Add to Collection
+                      if (sneaker.inCollection) {
+                        sneaker.setInCollection(false);
+                      } else {
+                        sneaker.setInCollection(true);
+                      } //TOOO: Aktualisierung der Anzeige
                     },
                     style: ElevatedButton.styleFrom(
                         shape: CircleBorder(), padding: EdgeInsets.all(10)),
@@ -73,7 +77,11 @@ class ProductCard extends StatelessWidget {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      // Add to Favs
+                      if (sneaker.inFavorites) {
+                        sneaker.setInFavorites(false);
+                      } else {
+                        sneaker.setInFavorites(true);
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       shape: CircleBorder(),

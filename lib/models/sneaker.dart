@@ -4,10 +4,11 @@ class Sneaker {
   final String name;
   final String imageUrl;
   final double price;
-  final int size;
-  final double purchasePrice;
-  final bool inCollection;
-  final bool inFavorites;
+  int count;
+  int size;
+  double purchasePrice;
+  bool inCollection;
+  bool inFavorites;
 
   Sneaker({
     required this.brand,
@@ -15,9 +16,26 @@ class Sneaker {
     required this.name,
     required this.imageUrl,
     required this.price,
+    required this.count,
     required this.size,
     required this.purchasePrice,
     required this.inCollection,
     required this.inFavorites,
   });
+
+  void setInFavorites(bool value) {
+    inFavorites = value;
+  }
+
+  void setInCollection(bool value) {
+    inCollection = value;
+  }
+
+  void setSize(int value) {
+    size = value;
+  }
+
+  void setPurchasePrice(double value) {
+    purchasePrice = value;
+  }
 }
