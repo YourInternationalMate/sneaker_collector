@@ -1,21 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:sneaker_collector/models/sneaker.dart';
-import 'package:sneaker_collector/detail_screen.dart';
 
 class ProductCard extends StatelessWidget {
   final Sneaker sneaker;
+  final Function onTapFunction;
 
-  const ProductCard(this.sneaker);
+  const ProductCard(this.sneaker, {required this.onTapFunction});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => DetailScreen(sneaker: sneaker)),
-        );
+        onTapFunction();
       },
       child: Container(
         height: 160,

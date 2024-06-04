@@ -26,9 +26,9 @@ class _NavBarState extends State<NavBar> {
         case 0:
           Navigator.pushReplacementNamed(context, '/login'); //muss auf search geändert werden
           break;
-        // case 1:
-        //   Navigator.pushReplacementNamed(context, '/favorites');
-        //   break;
+        case 1:
+          Navigator.pushReplacementNamed(context, '/favorites');
+          break;
         case 2:
           Navigator.pushReplacementNamed(context, '/collection');
           break;

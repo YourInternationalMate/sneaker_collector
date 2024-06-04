@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:sneaker_collector/collection.dart';
+import 'package:sneaker_collector/favorites.dart';
 import 'login_screen.dart';
 
 
@@ -25,6 +26,7 @@ class MyApp extends StatelessWidget {
       routes: { // routing zwischen den Seiten
         '/': (context) => LoginScreen(),
         '/login': (context) => LoginScreen(),
+        '/favorites': (context) => Favorites(),
         '/collection': (context) => Collection(),
       },
     );
