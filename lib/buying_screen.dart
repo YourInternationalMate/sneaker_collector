@@ -45,8 +45,50 @@ class BuyingScreen extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                       fontFamily: "Future",
                       fontSize: 24)),
-              const SizedBox(height: 70),
-              
+              const SizedBox(height: 200),
+              Container(
+                width: 300,
+                height: 70,
+                child: ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
+                  child: const Text(
+                    'StockX',
+                    style: TextStyle(
+                        color: Color(0xFF6F2DFF),
+                        fontWeight: FontWeight.bold,
+                        fontFamily: "Future",
+                        fontSize: 24),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Container(
+                width: 300,
+                height: 70,
+                child: ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
+                  child: const Text(
+                    'GOAT',
+                    style: TextStyle(
+                        color: Color(0xFF6F2DFF),
+                        fontWeight: FontWeight.bold,
+                        fontFamily: "Future",
+                        fontSize: 24),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
