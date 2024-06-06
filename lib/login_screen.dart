@@ -9,14 +9,14 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.black, //TODO: Hintergrund Farbe anpassen
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Image.asset('assets/images/logo/SneakerCollectorLogo.png',
                 width: 200, height: 200),
-            SizedBox(height: 100),
+            const SizedBox(height: 100),
             Container(
               width: 300,
               height: 320,
@@ -29,7 +29,7 @@ class LoginScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   const Text(
-                    'LOGIN',
+                    '"LOGIN"',
                     style: TextStyle(
                         fontSize: 40,
                         fontWeight: FontWeight.bold,

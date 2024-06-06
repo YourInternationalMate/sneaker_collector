@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sneaker_collector/models/sneaker.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class BuyingScreen extends StatelessWidget {
   final Sneaker sneaker;
@@ -50,7 +51,9 @@ class BuyingScreen extends StatelessWidget {
                 width: 300,
                 height: 70,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    _launchStockX();
+                  },
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size(double.infinity, 50),
                     shape: RoundedRectangleBorder(
@@ -72,7 +75,9 @@ class BuyingScreen extends StatelessWidget {
                 width: 300,
                 height: 70,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    _launchGoat();
+                  },
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size(double.infinity, 50),
                     shape: RoundedRectangleBorder(
@@ -94,5 +99,19 @@ class BuyingScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  _launchStockX() async {
+   final Uri url = Uri.parse('https://stockx.com'); //TODO: URL an Schuh anpassen
+   if (!await launchUrl(url)) {
+        throw Exception('Could not launch $url');
+    }
+  }
+
+  _launchGoat() async {
+   final Uri url = Uri.parse('https://goat.com'); //TODO: URL an Schuh anpassen
+   if (!await launchUrl(url)) {
+        throw Exception('Could not launch $url');
+    }
   }
 }

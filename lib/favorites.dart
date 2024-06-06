@@ -21,7 +21,7 @@ class Favorites extends StatelessWidget {
           children: <Widget>[
             const SizedBox(height: 70),
             const Text(
-              'Favorites',
+              '"Favorites"',
               style: TextStyle(
                 fontSize: 40,
                 fontWeight: FontWeight.bold,

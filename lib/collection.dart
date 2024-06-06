@@ -21,7 +21,7 @@ class Collection extends StatelessWidget {
           children: <Widget>[
             const SizedBox(height: 70),
             const Text(
-              'Collection',
+              '"Collection"',
               style: TextStyle(
                 fontSize: 40,
                 fontWeight: FontWeight.bold,
