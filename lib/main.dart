@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:sneaker_collector/collection.dart';
 import 'package:sneaker_collector/favorites.dart';
+import 'package:sneaker_collector/profile.dart';
 import 'login_screen.dart';
 
 
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => LoginScreen(),
         '/favorites': (context) => Favorites(),
         '/collection': (context) => Collection(),
+        '/profile': (context) => const Profile(),
       },
     );
   }

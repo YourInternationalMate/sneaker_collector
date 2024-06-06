@@ -32,9 +32,9 @@ class _NavBarState extends State<NavBar> {
         case 2:
           Navigator.pushReplacementNamed(context, '/collection');
           break;
-        // case 3:
-        //   // Profil-Seite (noch nicht implementiert)
-        //   break;
+        case 3:
+          Navigator.pushReplacementNamed(context, '/profile');
+          break;
       }
     });
   }
