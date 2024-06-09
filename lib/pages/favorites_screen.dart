@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:sneaker_collector/components/navbar.dart';
 import 'package:sneaker_collector/models/sneaker.dart';
 import 'package:sneaker_collector/components/product_card.dart';
-import 'package:sneaker_collector/pages/detail_screen.dart';
+import 'package:sneaker_collector/pages/buying_screen.dart';
 
-class Collection extends StatelessWidget {
-  Collection({super.key});
+class Favorites extends StatelessWidget {
+  Favorites({super.key});
 
   final List<Sneaker> sneakers = [];
   
@@ -13,7 +12,7 @@ class Collection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    addItemsTo(); // aktuell nur Beispiel-Produkte
+    addItemsTo();
     return Scaffold(
       body: Center(
         child: Column(
@@ -21,7 +20,7 @@ class Collection extends StatelessWidget {
           children: <Widget>[
             const SizedBox(height: 70),
             const Text(
-              '"Collection"',
+              '"Favorites"',
               style: TextStyle(
                 fontSize: 40,
                 fontWeight: FontWeight.bold,
@@ -32,34 +31,17 @@ class Collection extends StatelessWidget {
             Expanded(
               child: sneakers.isEmpty
                   ? const Text(
-                      'Your collection is empty.',
+                      "You've not added any favorites yet.",
                       style: TextStyle(fontSize: 18),
                     )
                   : ListView.builder(
                       itemCount: sneakers.length,
                       itemBuilder: (context, index) {
-                        return ProductCard(sneakers[index], onTapFunction: () => navigateToDetailScreen(context, sneakers[index]));
+                        return ProductCard(sneakers[index], onTapFunction: () => navigateToBuyingScreen(context, sneakers[index]));
                       },
                     ),
             ),
-            const SizedBox(height: 100)
           ],
-        ),
-      ),
-
-      // Navigation Bar
-      extendBody: true,
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: Container(
-        height: 65,
-        margin: const EdgeInsets.symmetric(horizontal: 25),
-        decoration: BoxDecoration(
-          color: const Color(0xFF6F2DFF),
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(15),
-          child: NavBar(2),
         ),
       ),
     );
@@ -71,11 +53,11 @@ class Collection extends StatelessWidget {
     }
   }
 
-  void navigateToDetailScreen(BuildContext context, Sneaker sneaker) {
+  void navigateToBuyingScreen(BuildContext context, Sneaker sneaker) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => DetailScreen(sneaker: sneaker),
+        builder: (context) => BuyingScreen(sneaker: sneaker),
       ),
     );
   }

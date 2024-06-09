@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sneaker_collector/components/navbar.dart';
 class Profile extends StatelessWidget {
   const Profile({super.key});
   
@@ -59,22 +58,6 @@ class Profile extends StatelessWidget {
               )
             
           ],
-        ),
-      ),
-
-      // Navigation Bar
-      extendBody: true,
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: Container(
-        height: 65,
-        margin: const EdgeInsets.symmetric(horizontal: 25),
-        decoration: BoxDecoration(
-          color: const Color(0xFF6F2DFF),
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(15),
-          child: NavBar(3),
         ),
       ),
     );

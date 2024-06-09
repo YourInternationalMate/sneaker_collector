@@ -94,7 +94,7 @@ class LoginScreen extends StatelessWidget {
     //Login Check
     if (usernameController.text == 'admin' &&
         passwordController.text == 'admin') {
-      Navigator.pushReplacementNamed(context, '/search');
+      Navigator.pushReplacementNamed(context, '/home');
     } else {
       showDialog(
         //Login Failed PopUp

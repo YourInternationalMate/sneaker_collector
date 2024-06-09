@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:sneaker_collector/pages/collection.dart';
-import 'package:sneaker_collector/pages/favorites.dart';
-import 'package:sneaker_collector/pages/profile.dart';
-import 'package:sneaker_collector/pages/search.dart';
+import 'package:sneaker_collector/home_screen.dart';
 import 'pages/login_screen.dart';
 
 
@@ -28,10 +25,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: { // routing zwischen den Seiten
         '/': (context) => LoginScreen(),
-        '/search': (context) => SearchScreen(),
-        '/favorites': (context) => Favorites(),
-        '/collection': (context) => Collection(),
-        '/profile': (context) => const Profile(),
+        '/home': (context) => HomeScreen()
       },
     );
   }

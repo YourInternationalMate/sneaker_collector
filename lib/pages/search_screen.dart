@@ -1,17 +1,14 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
-import 'package:sneaker_collector/components/navbar.dart';
 import 'package:sneaker_collector/models/sneaker.dart';
 import 'package:sneaker_collector/components/product_card.dart';
 import 'package:sneaker_collector/pages/buying_screen.dart';
 
-class SearchScreen extends StatefulWidget {
+class Search extends StatefulWidget {
   @override
   _SearchScreenState createState() => _SearchScreenState();
 }
 
-class _SearchScreenState extends State<SearchScreen> {
+class _SearchScreenState extends State<Search> {
   List<Sneaker> sneakers = [];
   List<Sneaker> filteredSneakers = [];
   TextEditingController searchController = TextEditingController();
@@ -121,24 +118,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       },
                     ),
             ),
-            const SizedBox(height: 100)
           ],
-        ),
-      ),
-
-      // Navigation Bar
-      extendBody: true,
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: Container(
-        height: 65,
-        margin: const EdgeInsets.symmetric(horizontal: 25),
-        decoration: BoxDecoration(
-          color: const Color(0xFF6F2DFF),
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(15),
-          child: NavBar(0),
         ),
       ),
     );
