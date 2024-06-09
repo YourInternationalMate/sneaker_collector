@@ -53,7 +53,7 @@ class Favorites extends StatelessWidget {
     }
   }
 
-  void navigateToBuyingScreen(BuildContext context, Sneaker sneaker) {
+  void navigateToBuyingScreen(BuildContext context, Sneaker sneaker) { // Hier wird auf die Detailseite navigiert
     Navigator.push(
       context,
       MaterialPageRoute(

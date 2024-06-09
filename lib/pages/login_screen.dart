@@ -37,7 +37,7 @@ class LoginScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   SizedBox(
-                    width: 250, // Inputfeldbreite
+                    width: 250,
                     child: TextField(
                       controller: usernameController,
                       decoration: const InputDecoration(
@@ -49,7 +49,7 @@ class LoginScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   SizedBox(
-                    width: 250, // Inputfeldbreite
+                    width: 250,
                     child: TextField(
                       controller: passwordController,
                       obscureText: true,
@@ -62,7 +62,7 @@ class LoginScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   SizedBox(
-                    width: 250, // Buttonbreite
+                    width: 250,
                     child: ElevatedButton(
                       onPressed: () {
                         checkLogin(context);

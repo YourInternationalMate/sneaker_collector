@@ -53,7 +53,7 @@ class Collection extends StatelessWidget {
     }
   }
 
-  void navigateToDetailScreen(BuildContext context, Sneaker sneaker) {
+  void navigateToDetailScreen(BuildContext context, Sneaker sneaker) { // Hier wird auf die Detailseite navigiert
     Navigator.push(
       context,
       MaterialPageRoute(

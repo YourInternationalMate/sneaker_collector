@@ -22,7 +22,7 @@ class _SearchScreenState extends State<Search> {
     });
   }
 
-  void filterSneakers() {
+  void filterSneakers() { // Wenn gesucht wird, wird hier die Liste gefiltert
   List<Sneaker> _sneakers = [];
   _sneakers.addAll(sneakers);
   if (searchController.text.isNotEmpty) {
@@ -39,35 +39,6 @@ class _SearchScreenState extends State<Search> {
     filteredSneakers = _sneakers;
   });
 }
-
-  void addItemsTo() {
-    
-    sneakers.add(Sneaker(
-        brand: "Adidas",
-        model: "Ultraboost",
-        name: "Disney Goofy",
-        imageUrl: "assets/images/adidas-Ultra-Boost-Disney-Goofy-Product.jpg",
-        price: 320,
-        count: 1,
-        size: 42,
-        purchasePrice: 250,
-        inCollection: true,
-        inFavorites: false));
-
-    sneakers.add(Sneaker(
-        brand: "Nike",
-        model: "SB Dunk low",
-        name: "Supreme Rammellzee",
-        imageUrl: "assets/images/sbdunklow.png",
-        price: 320,
-        count: 1,
-        size: 42,
-        purchasePrice: 250,
-        inCollection: true,
-        inFavorites: false));
-    
-    filteredSneakers = sneakers;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -107,10 +78,15 @@ class _SearchScreenState extends State<Search> {
             ),
             Expanded(
               child: filteredSneakers.isEmpty
-                  ? const Text(
-                      "No sneakers found.",
-                      style: TextStyle(fontSize: 18),
-                    )
+                  ? const Column(
+                    children: <Widget>[
+                      SizedBox(height: 20),
+                      Text(
+                        "No sneakers found.",
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ]
+                  )
                   : ListView.builder(
                       itemCount: filteredSneakers.length,
                       itemBuilder: (context, index) {
@@ -124,13 +100,42 @@ class _SearchScreenState extends State<Search> {
     );
   }
 
-  void navigateToBuyingScreen(BuildContext context, Sneaker sneaker) {
+  void navigateToBuyingScreen(BuildContext context, Sneaker sneaker) { // Hier wird auf die Detailseite navigiert
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => BuyingScreen(sneaker: sneaker),
       ),
     );
+  }
+
+  void addItemsTo() { // Hier können Produkte hinzugefügt werden
+    
+    sneakers.add(Sneaker(
+        brand: "Adidas",
+        model: "Ultraboost",
+        name: "Disney Goofy",
+        imageUrl: "assets/images/adidas-Ultra-Boost-Disney-Goofy-Product.jpg",
+        price: 320,
+        count: 1,
+        size: 42,
+        purchasePrice: 250,
+        inCollection: true,
+        inFavorites: false));
+
+    sneakers.add(Sneaker(
+        brand: "Nike",
+        model: "SB Dunk low",
+        name: "Supreme Rammellzee",
+        imageUrl: "assets/images/sbdunklow.png",
+        price: 320,
+        count: 1,
+        size: 42,
+        purchasePrice: 250,
+        inCollection: true,
+        inFavorites: false));
+    
+    filteredSneakers = sneakers;
   }
 
 }
