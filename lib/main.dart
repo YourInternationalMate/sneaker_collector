@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:sneaker_collector/collection.dart';
-import 'package:sneaker_collector/favorites.dart';
-import 'package:sneaker_collector/profile.dart';
-import 'login_screen.dart';
+import 'package:sneaker_collector/pages/collection.dart';
+import 'package:sneaker_collector/pages/favorites.dart';
+import 'package:sneaker_collector/pages/profile.dart';
+import 'package:sneaker_collector/pages/search.dart';
+import 'pages/login_screen.dart';
 
 
 void main() async {
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Sneaker Collector',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.purple,
         visualDensity: VisualDensity.adaptivePlatformDensity,
@@ -26,7 +28,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: { // routing zwischen den Seiten
         '/': (context) => LoginScreen(),
-        '/login': (context) => LoginScreen(),
+        '/search': (context) => SearchScreen(),
         '/favorites': (context) => Favorites(),
         '/collection': (context) => Collection(),
         '/profile': (context) => const Profile(),

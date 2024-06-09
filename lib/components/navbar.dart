@@ -24,7 +24,7 @@ class _NavBarState extends State<NavBar> {
       _selectedIndex = index;
       switch (index) {
         case 0:
-          Navigator.pushReplacementNamed(context, '/login'); //muss auf search geändert werden
+          Navigator.pushReplacementNamed(context, '/search'); //muss auf search geändert werden
           break;
         case 1:
           Navigator.pushReplacementNamed(context, '/favorites');

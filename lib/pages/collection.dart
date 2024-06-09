@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:sneaker_collector/components/navbar.dart';
 import 'package:sneaker_collector/models/sneaker.dart';
 import 'package:sneaker_collector/components/product_card.dart';
-import 'package:sneaker_collector/buying_screen.dart';
+import 'package:sneaker_collector/pages/detail_screen.dart';
 
-class Favorites extends StatelessWidget {
-  Favorites({super.key});
+class Collection extends StatelessWidget {
+  Collection({super.key});
 
   final List<Sneaker> sneakers = [];
   
@@ -13,7 +13,7 @@ class Favorites extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    addItemsTo();
+    addItemsTo(); // aktuell nur Beispiel-Produkte
     return Scaffold(
       body: Center(
         child: Column(
@@ -21,7 +21,7 @@ class Favorites extends StatelessWidget {
           children: <Widget>[
             const SizedBox(height: 70),
             const Text(
-              '"Favorites"',
+              '"Collection"',
               style: TextStyle(
                 fontSize: 40,
                 fontWeight: FontWeight.bold,
@@ -32,13 +32,13 @@ class Favorites extends StatelessWidget {
             Expanded(
               child: sneakers.isEmpty
                   ? const Text(
-                      "You've not added any favorites yet.",
+                      'Your collection is empty.',
                       style: TextStyle(fontSize: 18),
                     )
                   : ListView.builder(
                       itemCount: sneakers.length,
                       itemBuilder: (context, index) {
-                        return ProductCard(sneakers[index], onTapFunction: () => navigateToBuyingScreen(context, sneakers[index]));
+                        return ProductCard(sneakers[index], onTapFunction: () => navigateToDetailScreen(context, sneakers[index]));
                       },
                     ),
             ),
@@ -59,7 +59,7 @@ class Favorites extends StatelessWidget {
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(15),
-          child: NavBar(1),
+          child: NavBar(2),
         ),
       ),
     );
@@ -71,11 +71,11 @@ class Favorites extends StatelessWidget {
     }
   }
 
-  void navigateToBuyingScreen(BuildContext context, Sneaker sneaker) {
+  void navigateToDetailScreen(BuildContext context, Sneaker sneaker) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => BuyingScreen(sneaker: sneaker),
+        builder: (context) => DetailScreen(sneaker: sneaker),
       ),
     );
   }

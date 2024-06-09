@@ -5,7 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 class BuyingScreen extends StatelessWidget {
   final Sneaker sneaker;
 
-  const BuyingScreen({required this.sneaker});
+  const BuyingScreen({super.key, required this.sneaker});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class BuyingScreen extends StatelessWidget {
             },
           ),
           title: Text(
-            sneaker.brand + " " + sneaker.model,
+            "${sneaker.brand} ${sneaker.model}",
             style: const TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
@@ -47,7 +47,7 @@ class BuyingScreen extends StatelessWidget {
                       fontFamily: "Future",
                       fontSize: 24)),
               const SizedBox(height: 200),
-              Container(
+              SizedBox(
                 width: 300,
                 height: 70,
                 child: ElevatedButton(
@@ -71,7 +71,7 @@ class BuyingScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              Container(
+              SizedBox(
                 width: 300,
                 height: 70,
                 child: ElevatedButton(

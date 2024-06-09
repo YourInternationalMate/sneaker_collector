@@ -5,7 +5,7 @@ class ProductCard extends StatelessWidget {
   final Sneaker sneaker;
   final Function onTapFunction;
 
-  const ProductCard(this.sneaker, {required this.onTapFunction});
+  const ProductCard(this.sneaker, {super.key, required this.onTapFunction});
 
   @override
   Widget build(BuildContext context) {
@@ -13,45 +13,52 @@ class ProductCard extends StatelessWidget {
       onTap: () {
         onTapFunction();
       },
-      child: Container(
+      child: SizedBox(
         height: 160,
         child: Card(
           color: Colors.white,
           margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
           child: Column(
-            mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               ListTile(
-                leading: Container(
+                leading: SizedBox(
                     width: 140,
                     height: 100,
-                    child: Image.asset(sneaker.imageUrl)), // TODO: Bild zentrieren 
+                    child: Image.asset(sneaker.imageUrl)),
                 title: Align(
                   alignment: Alignment.topLeft,
-                  child: Text(sneaker.brand + " " + sneaker.model,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontFamily: "Future",
-                          fontSize: 16)),
+                  child: Text(
+                    "${sneaker.brand} ${sneaker.model}",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontFamily: "Future",
+                      fontSize: 16,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
                 ),
                 subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Text(sneaker.name,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontFamily: "Future",
-                              fontSize: 16)),
+                    Text(
+                      sneaker.name,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontFamily: "Future",
+                        fontSize: 16,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                     ),
-                    Align(
-                      alignment: Alignment.bottomLeft,
-                      child: Text('\$${sneaker.price.toStringAsFixed(0)}',
-                          style: const TextStyle(
-                              color: const Color(0xFF6F2DFF),
-                              fontWeight: FontWeight.bold,
-                              fontFamily: "Future",
-                              fontSize: 16)),
+                    Text(
+                      '\$${sneaker.price.toStringAsFixed(0)}',
+                      style: const TextStyle(
+                        color: Color(0xFF6F2DFF),
+                        fontWeight: FontWeight.bold,
+                        fontFamily: "Future",
+                        fontSize: 16,
+                      ),
                     ),
                   ],
                 ),
@@ -65,11 +72,13 @@ class ProductCard extends StatelessWidget {
                         sneaker.setInCollection(false);
                       } else {
                         sneaker.setInCollection(true);
-                      } //TOOO: Aktualisierung der Anzeige
+                      }
                     },
                     style: ElevatedButton.styleFrom(
-                        shape: CircleBorder(), padding: EdgeInsets.all(10)),
-                    child: Icon(Icons.star, color: const Color(0xFF6F2DFF)),
+                      shape: const CircleBorder(),
+                      padding: const EdgeInsets.all(10),
+                    ),
+                    child: const Icon(Icons.star, color: Color(0xFF6F2DFF)),
                   ),
                   ElevatedButton(
                     onPressed: () {
@@ -80,13 +89,13 @@ class ProductCard extends StatelessWidget {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      shape: CircleBorder(),
-                      padding: EdgeInsets.all(10),
+                      shape: const CircleBorder(),
+                      padding: const EdgeInsets.all(10),
                     ),
-                    child: Icon(Icons.favorite, color: const Color(0xFF6F2DFF)),
+                    child: const Icon(Icons.favorite, color: Color(0xFF6F2DFF)),
                   ),
                 ],
-              )
+              ),
             ],
           ),
         ),

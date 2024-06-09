@@ -4,7 +4,7 @@ import 'package:sneaker_collector/models/sneaker.dart';
 class DetailScreen extends StatelessWidget {
   final Sneaker sneaker;
 
-  const DetailScreen({required this.sneaker});
+  const DetailScreen({super.key, required this.sneaker});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class DetailScreen extends StatelessWidget {
             },
           ),
           title: Text(
-            sneaker.brand + " " + sneaker.model,
+            "${sneaker.brand} ${sneaker.model}",
             style: const TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
@@ -88,7 +88,7 @@ class DetailScreen extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                           fontFamily: "Future",
                           fontSize: 24)),
-                  Text('${sneaker.size.toStringAsFixed(0)}',
+                  Text(sneaker.size.toStringAsFixed(0),
                       style: const TextStyle(
                           color: Color(0xFF6F2DFF),
                           fontWeight: FontWeight.bold,
@@ -111,7 +111,7 @@ class DetailScreen extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                         shape: const CircleBorder(),
                         padding: const EdgeInsets.all(20)),
-                    child: Icon(Icons.favorite, color: const Color(0xFF6F2DFF)),
+                    child: const Icon(Icons.favorite, color: Color(0xFF6F2DFF)),
                   ),
                   const SizedBox(width: 40),
                   ElevatedButton(
@@ -129,7 +129,7 @@ class DetailScreen extends StatelessWidget {
                       shape: const CircleBorder(),
                       padding: const EdgeInsets.all(20),
                     ),
-                    child: Icon(Icons.edit, color: const Color(0xFF6F2DFF)),
+                    child: const Icon(Icons.edit, color: Color(0xFF6F2DFF)),
                   ),
                 ],
               )
