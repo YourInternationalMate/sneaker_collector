@@ -214,6 +214,7 @@ class _LoginScreenState extends State<LoginScreen> {
     //Login Check
     if (_usernameController.text == 'admin' &&
         _passwordController.text == 'admin') {
+          // dispose();
       Navigator.pushReplacementNamed(context, '/home');
     } else {
       showDialog(
