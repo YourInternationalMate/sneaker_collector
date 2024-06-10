@@ -24,7 +24,9 @@ class ProductCard extends StatelessWidget {
                 leading: SizedBox(
                     width: 140,
                     height: 100,
-                    child: Image.asset(sneaker.imageUrl)),
+                    child: Image.asset(
+                        sneaker.imageUrl) //TODO: Bild über URL laden
+                    ),
                 title: Align(
                   alignment: Alignment.topLeft,
                   child: Text(

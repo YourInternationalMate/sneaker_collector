@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:730924529450:android:02ec0acfd1c993be229053",
         "android_client_info": {
-          "package_name": "com.sneakercollector.app"
+          "package_name": "com.example.sneaker_collector"
         }
       },
       "oauth_client": [],

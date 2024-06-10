@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sneaker_collector/models/sneaker.dart';
 import 'package:sneaker_collector/components/product_card.dart';
 import 'package:sneaker_collector/pages/buying_screen.dart';
+import 'package:sneaker_collector/utilities/constants.dart';
 
 class Search extends StatefulWidget {
   @override
@@ -22,23 +23,26 @@ class _SearchScreenState extends State<Search> {
     });
   }
 
-  void filterSneakers() { // Wenn gesucht wird, wird hier die Liste gefiltert
-  List<Sneaker> _sneakers = [];
-  _sneakers.addAll(sneakers);
-  if (searchController.text.isNotEmpty) {
-    List<String> searchTerms = searchController.text.toLowerCase().split(' ');
-    _sneakers.retainWhere((sneaker) {
-      String sneakerName = sneaker.name.toLowerCase();
-      String sneakerBrand = sneaker.brand.toLowerCase();
-      String sneakerModel = sneaker.model.toLowerCase();
-      return searchTerms.every((term) =>
-        sneakerName.contains(term) || sneakerBrand.contains(term) || sneakerModel.contains(term));
+  void filterSneakers() {
+    // Wenn gesucht wird, wird hier die Liste gefiltert
+    List<Sneaker> _sneakers = [];
+    _sneakers.addAll(sneakers);
+    if (searchController.text.isNotEmpty) {
+      List<String> searchTerms = searchController.text.toLowerCase().split(' ');
+      _sneakers.retainWhere((sneaker) {
+        String sneakerName = sneaker.name.toLowerCase();
+        String sneakerBrand = sneaker.brand.toLowerCase();
+        String sneakerModel = sneaker.model.toLowerCase();
+        return searchTerms.every((term) =>
+            sneakerName.contains(term) ||
+            sneakerBrand.contains(term) ||
+            sneakerModel.contains(term));
+      });
+    }
+    setState(() {
+      filteredSneakers = _sneakers;
     });
   }
-  setState(() {
-    filteredSneakers = _sneakers;
-  });
-}
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +51,7 @@ class _SearchScreenState extends State<Search> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const SizedBox(height: 70),
+            SizedBox(height: Constants.isAndroid ? 30 : 70,),
             const Text(
               '"Search"',
               style: TextStyle(
@@ -56,7 +60,7 @@ class _SearchScreenState extends State<Search> {
                 fontFamily: 'future',
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
             Theme(
               data: ThemeData(primaryColor: const Color(0xFF6F2DFF)),
               child: Padding(
@@ -78,19 +82,19 @@ class _SearchScreenState extends State<Search> {
             ),
             Expanded(
               child: filteredSneakers.isEmpty
-                  ? const Column(
-                    children: <Widget>[
+                  ? const Column(children: <Widget>[
                       SizedBox(height: 20),
                       Text(
                         "No sneakers found.",
                         style: TextStyle(fontSize: 18),
                       ),
-                    ]
-                  )
+                    ])
                   : ListView.builder(
                       itemCount: filteredSneakers.length,
                       itemBuilder: (context, index) {
-                        return ProductCard(filteredSneakers[index], onTapFunction: () => navigateToBuyingScreen(context, sneakers[index]));
+                        return ProductCard(filteredSneakers[index],
+                            onTapFunction: () => navigateToBuyingScreen(
+                                context, sneakers[index]));
                       },
                     ),
             ),
@@ -100,7 +104,8 @@ class _SearchScreenState extends State<Search> {
     );
   }
 
-  void navigateToBuyingScreen(BuildContext context, Sneaker sneaker) { // Hier wird auf die Detailseite navigiert
+  void navigateToBuyingScreen(BuildContext context, Sneaker sneaker) {
+    // Hier wird auf die Detailseite navigiert
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -109,8 +114,9 @@ class _SearchScreenState extends State<Search> {
     );
   }
 
-  void addItemsTo() { // Hier können Produkte hinzugefügt werden
-    
+  void addItemsTo() {
+    // Hier können Produkte hinzugefügt werden
+
     sneakers.add(Sneaker(
         brand: "Adidas",
         model: "Ultraboost",
@@ -134,8 +140,7 @@ class _SearchScreenState extends State<Search> {
         purchasePrice: 250,
         inCollection: true,
         inFavorites: false));
-    
+
     filteredSneakers = sneakers;
   }
-
 }

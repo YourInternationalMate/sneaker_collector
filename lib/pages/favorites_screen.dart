@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sneaker_collector/models/sneaker.dart';
 import 'package:sneaker_collector/components/product_card.dart';
 import 'package:sneaker_collector/pages/buying_screen.dart';
+import 'package:sneaker_collector/utilities/constants.dart';
 
 class Favorites extends StatelessWidget {
   Favorites({super.key});
@@ -18,7 +19,7 @@ class Favorites extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const SizedBox(height: 70),
+            SizedBox(height: Constants.isAndroid ? 30 : 70,),
             const Text(
               '"Favorites"',
               style: TextStyle(

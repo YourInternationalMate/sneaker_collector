@@ -33,7 +33,7 @@ class DetailScreen extends StatelessWidget {
           margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
           child: Column(
             children: <Widget>[
-              Image.asset(sneaker.imageUrl),
+              Image.asset(sneaker.imageUrl), //TODO: Bild über URL laden
               Text(sneaker.name,
                   style: const TextStyle(
                       fontWeight: FontWeight.bold,
@@ -120,8 +120,8 @@ class DetailScreen extends StatelessWidget {
                         context: context,
                         builder: (BuildContext context) {
                           return const AlertDialog(
-                            //TODO: Änderungsmenü einfügen
-                          );
+                              //TODO: Änderungsmenü einfügen
+                              );
                         },
                       );
                     },

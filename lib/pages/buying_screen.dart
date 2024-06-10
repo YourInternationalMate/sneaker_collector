@@ -34,7 +34,7 @@ class BuyingScreen extends StatelessWidget {
           margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
           child: Column(
             children: <Widget>[
-              Image.asset(sneaker.imageUrl),
+              Image.asset(sneaker.imageUrl), //TODO: Bild über URL laden
               Text(sneaker.name,
                   style: const TextStyle(
                       fontWeight: FontWeight.bold,
@@ -102,16 +102,17 @@ class BuyingScreen extends StatelessWidget {
   }
 
   _launchStockX() async {
-   final Uri url = Uri.parse('https://stockx.com'); //TODO: URL an Schuh anpassen
-   if (!await launchUrl(url)) {
-        throw Exception('Could not launch $url');
+    final Uri url =
+        Uri.parse('https://stockx.com'); //TODO: URL an Schuh anpassen
+    if (!await launchUrl(url)) {
+      throw Exception('Could not launch $url');
     }
   }
 
   _launchGoat() async {
-   final Uri url = Uri.parse('https://goat.com'); //TODO: URL an Schuh anpassen
-   if (!await launchUrl(url)) {
-        throw Exception('Could not launch $url');
+    final Uri url = Uri.parse('https://goat.com'); //TODO: URL an Schuh anpassen
+    if (!await launchUrl(url)) {
+      throw Exception('Could not launch $url');
     }
   }
 }

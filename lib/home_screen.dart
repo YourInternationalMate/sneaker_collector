@@ -15,7 +15,7 @@ class _HomeScreenState extends State<HomeScreen> {
     Search(),
     Collection(),
     Favorites(),
-    Profile(),
+    const Profile(),
   ];
 
   void _onTabTapped(int index) {

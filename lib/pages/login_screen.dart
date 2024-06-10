@@ -15,8 +15,10 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
 
   // Controller für das Registrierungs-Panel
-  final TextEditingController _registerUsernameController = TextEditingController();
-  final TextEditingController _registerPasswordController = TextEditingController();
+  final TextEditingController _registerUsernameController =
+      TextEditingController();
+  final TextEditingController _registerPasswordController =
+      TextEditingController();
 
   @override
   void dispose() {
@@ -47,7 +49,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 TextButton(
                   onPressed: () {
                     setState(() {
-                      isLogin = !isLogin; // Wechselt den Zustand zwischen Login und Registrierung
+                      isLogin =
+                          !isLogin; // Wechselt den Zustand zwischen Login und Registrierung
                     });
                   },
                   child: isLogin
@@ -72,149 +75,149 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Container _loginPanel(BuildContext context) {
     return Container(
-            width: 300,
-            height: 320,
-            alignment: Alignment.topCenter,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(50),
+      width: 300,
+      height: 320,
+      alignment: Alignment.topCenter,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(50),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          const Text(
+            '"LOGIN"',
+            style: TextStyle(
+                fontSize: 40,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'future'),
+          ),
+          const SizedBox(height: 20),
+          SizedBox(
+            width: 250,
+            child: TextField(
+              controller: _usernameController,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'USERNAME',
+                labelStyle: TextStyle(fontFamily: 'future'),
+              ),
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                const Text(
-                  '"LOGIN"',
-                  style: TextStyle(
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'future'),
-                ),
-                const SizedBox(height: 20),
-                SizedBox(
-                  width: 250,
-                  child: TextField(
-                    controller: _usernameController,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'USERNAME',
-                      labelStyle: TextStyle(fontFamily: 'future'),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                SizedBox(
-                  width: 250,
-                  child: TextField(
-                    controller: _passwordController,
-                    obscureText: true,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'PASSWORD',
-                      labelStyle: TextStyle(fontFamily: 'future'),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                SizedBox(
-                  width: 250,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      checkLogin(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF6F2DFF),
-                      foregroundColor: Colors.black,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                    child: const Text(
-                      'LOGIN',
-                      style: TextStyle(
-                          fontFamily: 'future', fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
-              ],
+          ),
+          const SizedBox(height: 20),
+          SizedBox(
+            width: 250,
+            child: TextField(
+              controller: _passwordController,
+              obscureText: true,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'PASSWORD',
+                labelStyle: TextStyle(fontFamily: 'future'),
+              ),
             ),
-          );
+          ),
+          const SizedBox(height: 20),
+          SizedBox(
+            width: 250,
+            child: ElevatedButton(
+              onPressed: () {
+                checkLogin(context);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF6F2DFF),
+                foregroundColor: Colors.black,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+              child: const Text(
+                'LOGIN',
+                style: TextStyle(
+                    fontFamily: 'future', fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Container _registerPanel(BuildContext context) {
     return Container(
-            width: 300,
-            height: 320,
-            alignment: Alignment.topCenter,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(50),
+      width: 300,
+      height: 320,
+      alignment: Alignment.topCenter,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(50),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          const Text(
+            '"REGISTER"',
+            style: TextStyle(
+                fontSize: 40,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'future'),
+          ),
+          const SizedBox(height: 20),
+          SizedBox(
+            width: 250,
+            child: TextField(
+              controller: _registerUsernameController,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'USERNAME',
+                labelStyle: TextStyle(fontFamily: 'future'),
+              ),
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                const Text(
-                  '"REGISTER"',
-                  style: TextStyle(
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'future'),
-                ),
-                const SizedBox(height: 20),
-                SizedBox(
-                  width: 250,
-                  child: TextField(
-                    controller: _registerUsernameController,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'USERNAME',
-                      labelStyle: TextStyle(fontFamily: 'future'),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                SizedBox(
-                  width: 250,
-                  child: TextField(
-                    controller: _registerPasswordController,
-                    obscureText: true,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'PASSWORD',
-                      labelStyle: TextStyle(fontFamily: 'future'),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                SizedBox(
-                  width: 250,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      checkRegistration(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF6F2DFF),
-                      foregroundColor: Colors.black,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                    child: const Text(
-                      'REGISTER',
-                      style: TextStyle(
-                          fontFamily: 'future', fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
-              ],
+          ),
+          const SizedBox(height: 20),
+          SizedBox(
+            width: 250,
+            child: TextField(
+              controller: _registerPasswordController,
+              obscureText: true,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'PASSWORD',
+                labelStyle: TextStyle(fontFamily: 'future'),
+              ),
             ),
-          );
+          ),
+          const SizedBox(height: 20),
+          SizedBox(
+            width: 250,
+            child: ElevatedButton(
+              onPressed: () {
+                checkRegistration(context);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF6F2DFF),
+                foregroundColor: Colors.black,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+              child: const Text(
+                'REGISTER',
+                style: TextStyle(
+                    fontFamily: 'future', fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   void checkLogin(BuildContext context) {
     //Login Check
     if (_usernameController.text == 'admin' &&
         _passwordController.text == 'admin') {
-          // dispose();
+      // dispose();
       Navigator.pushReplacementNamed(context, '/home');
     } else {
       showDialog(
@@ -239,6 +242,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void checkRegistration(BuildContext context) {
-    print(_registerUsernameController.text + " " + _registerPasswordController.text);
+    print(_registerUsernameController.text +
+        " " +
+        _registerPasswordController.text);
   }
 }
