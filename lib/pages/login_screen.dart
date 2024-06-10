@@ -1,10 +1,32 @@
 import 'package:flutter/material.dart';
 
-class LoginScreen extends StatelessWidget {
-  final TextEditingController usernameController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
-  LoginScreen({super.key});
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  bool isLogin = true;
+
+  // Controller für das Login-Panel
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  // Controller für das Registrierungs-Panel
+  final TextEditingController _registerUsernameController = TextEditingController();
+  final TextEditingController _registerPasswordController = TextEditingController();
+
+  @override
+  void dispose() {
+    // Controller freigeben, wenn der Screen nicht mehr verwendet wird
+    _usernameController.dispose();
+    _passwordController.dispose();
+    _registerUsernameController.dispose();
+    _registerPasswordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,72 +39,30 @@ class LoginScreen extends StatelessWidget {
             Image.asset('assets/images/logo/SneakerCollectorLogo.png',
                 width: 200, height: 200),
             const SizedBox(height: 100),
-            Container(
-              width: 300,
-              height: 320,
-              alignment: Alignment.topCenter,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(50),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  const Text(
-                    '"LOGIN"',
-                    style: TextStyle(
-                        fontSize: 40,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'future'),
-                  ),
-                  const SizedBox(height: 20),
-                  SizedBox(
-                    width: 250,
-                    child: TextField(
-                      controller: usernameController,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'USERNAME',
-                        labelStyle: TextStyle(fontFamily: 'future'),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  SizedBox(
-                    width: 250,
-                    child: TextField(
-                      controller: passwordController,
-                      obscureText: true,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'PASSWORD',
-                        labelStyle: TextStyle(fontFamily: 'future'),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  SizedBox(
-                    width: 250,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        checkLogin(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF6F2DFF),
-                        foregroundColor: Colors.black,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+            isLogin ? _loginPanel(context) : _registerPanel(context),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      isLogin = !isLogin; // Wechselt den Zustand zwischen Login und Registrierung
+                    });
+                  },
+                  child: isLogin
+                      ? const Text(
+                          'No account yet? Register here!',
+                          style: TextStyle(
+                              color: Colors.white, fontFamily: 'future'),
+                        )
+                      : const Text(
+                          'Already have an account? Login here!',
+                          style: TextStyle(
+                              color: Colors.white, fontFamily: 'future'),
                         ),
-                      ),
-                      child: const Text(
-                        'LOGIN',
-                        style: TextStyle(
-                            fontFamily: 'future', fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ],
         ),
@@ -90,10 +70,150 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
+  Container _loginPanel(BuildContext context) {
+    return Container(
+            width: 300,
+            height: 320,
+            alignment: Alignment.topCenter,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(50),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                const Text(
+                  '"LOGIN"',
+                  style: TextStyle(
+                      fontSize: 40,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'future'),
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: 250,
+                  child: TextField(
+                    controller: _usernameController,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'USERNAME',
+                      labelStyle: TextStyle(fontFamily: 'future'),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: 250,
+                  child: TextField(
+                    controller: _passwordController,
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'PASSWORD',
+                      labelStyle: TextStyle(fontFamily: 'future'),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: 250,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      checkLogin(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF6F2DFF),
+                      foregroundColor: Colors.black,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    child: const Text(
+                      'LOGIN',
+                      style: TextStyle(
+                          fontFamily: 'future', fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+  }
+
+  Container _registerPanel(BuildContext context) {
+    return Container(
+            width: 300,
+            height: 320,
+            alignment: Alignment.topCenter,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(50),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                const Text(
+                  '"REGISTER"',
+                  style: TextStyle(
+                      fontSize: 40,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'future'),
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: 250,
+                  child: TextField(
+                    controller: _registerUsernameController,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'USERNAME',
+                      labelStyle: TextStyle(fontFamily: 'future'),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: 250,
+                  child: TextField(
+                    controller: _registerPasswordController,
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'PASSWORD',
+                      labelStyle: TextStyle(fontFamily: 'future'),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: 250,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      checkRegistration(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF6F2DFF),
+                      foregroundColor: Colors.black,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    child: const Text(
+                      'REGISTER',
+                      style: TextStyle(
+                          fontFamily: 'future', fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+  }
+
   void checkLogin(BuildContext context) {
     //Login Check
-    if (usernameController.text == 'admin' &&
-        passwordController.text == 'admin') {
+    if (_usernameController.text == 'admin' &&
+        _passwordController.text == 'admin') {
       Navigator.pushReplacementNamed(context, '/home');
     } else {
       showDialog(
@@ -115,5 +235,9 @@ class LoginScreen extends StatelessWidget {
         },
       );
     }
+  }
+
+  void checkRegistration(BuildContext context) {
+    print(_registerUsernameController.text + " " + _registerPasswordController.text);
   }
 }
