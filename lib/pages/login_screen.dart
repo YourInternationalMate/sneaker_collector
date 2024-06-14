@@ -33,41 +33,44 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true, // Wichtig für die Anpassung bei Tastatureinblendung
       backgroundColor: Colors.black, //TODO: Hintergrund Farbe anpassen
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Image.asset('assets/images/logo/SneakerCollectorLogo.png',
-                width: 200, height: 200),
-            const SizedBox(height: 100),
-            isLogin ? _loginPanel(context) : _registerPanel(context),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      isLogin =
-                          !isLogin; // Wechselt den Zustand zwischen Login und Registrierung
-                    });
-                  },
-                  child: isLogin
-                      ? const Text(
-                          'No account yet? Register here!',
-                          style: TextStyle(
-                              color: Colors.white, fontFamily: 'future'),
-                        )
-                      : const Text(
-                          'Already have an account? Login here!',
-                          style: TextStyle(
-                              color: Colors.white, fontFamily: 'future'),
-                        ),
-                ),
-              ],
-            ),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Image.asset('assets/images/logo/SneakerCollectorLogo.png',
+                  width: 200, height: 200),
+              const SizedBox(height: 50),
+              isLogin ? _loginPanel(context) : _registerPanel(context),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        isLogin =
+                            !isLogin; // Wechselt den Zustand zwischen Login und Registrierung
+                      });
+                    },
+                    child: isLogin
+                        ? const Text(
+                            'No account yet? Register here!',
+                            style: TextStyle(
+                                color: Colors.white, fontFamily: 'future'),
+                          )
+                        : const Text(
+                            'Already have an account? Login here!',
+                            style: TextStyle(
+                                color: Colors.white, fontFamily: 'future'),
+                          ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -76,7 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Container _loginPanel(BuildContext context) {
     return Container(
       width: 300,
-      height: 320,
+      padding: const EdgeInsets.all(20), // Padding hinzugefügt
       alignment: Alignment.topCenter,
       decoration: BoxDecoration(
         color: Colors.white,
@@ -93,49 +96,40 @@ class _LoginScreenState extends State<LoginScreen> {
                 fontFamily: 'future'),
           ),
           const SizedBox(height: 20),
-          SizedBox(
-            width: 250,
-            child: TextField(
-              controller: _usernameController,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'USERNAME',
-                labelStyle: TextStyle(fontFamily: 'future'),
-              ),
+          TextField(
+            controller: _usernameController,
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: 'USERNAME',
+              labelStyle: TextStyle(fontFamily: 'future'),
             ),
           ),
           const SizedBox(height: 20),
-          SizedBox(
-            width: 250,
-            child: TextField(
-              controller: _passwordController,
-              obscureText: true,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'PASSWORD',
-                labelStyle: TextStyle(fontFamily: 'future'),
-              ),
+          TextField(
+            controller: _passwordController,
+            obscureText: true,
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: 'PASSWORD',
+              labelStyle: TextStyle(fontFamily: 'future'),
             ),
           ),
           const SizedBox(height: 20),
-          SizedBox(
-            width: 250,
-            child: ElevatedButton(
-              onPressed: () {
-                checkLogin(context);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF6F2DFF),
-                foregroundColor: Colors.black,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
+          ElevatedButton(
+            onPressed: () {
+              checkLogin(context);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF6F2DFF),
+              foregroundColor: Colors.black,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
               ),
-              child: const Text(
-                'LOGIN',
-                style: TextStyle(
-                    fontFamily: 'future', fontWeight: FontWeight.bold),
-              ),
+            ),
+            child: const Text(
+              'LOGIN',
+              style: TextStyle(
+                  fontFamily: 'future', fontWeight: FontWeight.bold),
             ),
           ),
         ],
@@ -146,7 +140,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Container _registerPanel(BuildContext context) {
     return Container(
       width: 300,
-      height: 320,
+      padding: const EdgeInsets.all(20), // Padding hinzugefügt
       alignment: Alignment.topCenter,
       decoration: BoxDecoration(
         color: Colors.white,
@@ -163,49 +157,40 @@ class _LoginScreenState extends State<LoginScreen> {
                 fontFamily: 'future'),
           ),
           const SizedBox(height: 20),
-          SizedBox(
-            width: 250,
-            child: TextField(
-              controller: _registerUsernameController,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'USERNAME',
-                labelStyle: TextStyle(fontFamily: 'future'),
-              ),
+          TextField(
+            controller: _registerUsernameController,
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: 'USERNAME',
+              labelStyle: TextStyle(fontFamily: 'future'),
             ),
           ),
           const SizedBox(height: 20),
-          SizedBox(
-            width: 250,
-            child: TextField(
-              controller: _registerPasswordController,
-              obscureText: true,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'PASSWORD',
-                labelStyle: TextStyle(fontFamily: 'future'),
-              ),
+          TextField(
+            controller: _registerPasswordController,
+            obscureText: true,
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: 'PASSWORD',
+              labelStyle: TextStyle(fontFamily: 'future'),
             ),
           ),
           const SizedBox(height: 20),
-          SizedBox(
-            width: 250,
-            child: ElevatedButton(
-              onPressed: () {
-                checkRegistration(context);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF6F2DFF),
-                foregroundColor: Colors.black,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
+          ElevatedButton(
+            onPressed: () {
+              checkRegistration(context);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF6F2DFF),
+              foregroundColor: Colors.black,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
               ),
-              child: const Text(
-                'REGISTER',
-                style: TextStyle(
-                    fontFamily: 'future', fontWeight: FontWeight.bold),
-              ),
+            ),
+            child: const Text(
+              'REGISTER',
+              style: TextStyle(
+                  fontFamily: 'future', fontWeight: FontWeight.bold),
             ),
           ),
         ],
