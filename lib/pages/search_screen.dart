@@ -47,6 +47,7 @@ class _SearchScreenState extends State<Search> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -62,7 +63,7 @@ class _SearchScreenState extends State<Search> {
             ),
             const SizedBox(height: 20),
             Theme(
-              data: ThemeData(primaryColor: const Color(0xFF6F2DFF)),
+              data: ThemeData(primaryColor: Theme.of(context).colorScheme.secondary),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: TextField(
@@ -71,8 +72,8 @@ class _SearchScreenState extends State<Search> {
                     labelText: "Search",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(
-                        color: Color(0xFF6F2DFF),
+                      borderSide: BorderSide(
+                        color: Theme.of(context).colorScheme.secondary,
                       ),
                     ),
                     prefixIcon: Icon(Icons.search),

@@ -17,11 +17,11 @@ class DetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.primary,
       appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          iconTheme: const IconThemeData(color: Colors.black),
+          iconTheme: IconThemeData(color: Theme.of(context).colorScheme.tertiary),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
@@ -30,8 +30,8 @@ class DetailScreen extends StatelessWidget {
           ),
           title: Text(
             "${sneaker.brand} ${sneaker.model}",
-            style: const TextStyle(
-                color: Colors.black,
+            style: TextStyle(
+                color: Theme.of(context).colorScheme.tertiary,
                 fontWeight: FontWeight.bold,
                 fontFamily: "Future",
                 fontSize: 24),
@@ -48,8 +48,8 @@ class DetailScreen extends StatelessWidget {
                       fontFamily: "Future",
                       fontSize: 24)),
               Text('\$${sneaker.price.toStringAsFixed(0)}',
-                  style: const TextStyle(
-                      color: Color(0xFF6F2DFF),
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.secondary,
                       fontWeight: FontWeight.bold,
                       fontFamily: "Future",
                       fontSize: 24)),
@@ -63,8 +63,8 @@ class DetailScreen extends StatelessWidget {
                           fontFamily: "Future",
                           fontSize: 24)),
                   Text('\$${sneaker.purchasePrice.toStringAsFixed(0)}',
-                      style: const TextStyle(
-                          color: Color(0xFF6F2DFF),
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary,
                           fontWeight: FontWeight.bold,
                           fontFamily: "Future",
                           fontSize: 24)),
@@ -80,8 +80,8 @@ class DetailScreen extends StatelessWidget {
                           fontFamily: "Future",
                           fontSize: 24)),
                   Text(sneaker.count.toStringAsFixed(0),
-                      style: const TextStyle(
-                          color: Color(0xFF6F2DFF),
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary,
                           fontWeight: FontWeight.bold,
                           fontFamily: "Future",
                           fontSize: 24)),
@@ -97,8 +97,8 @@ class DetailScreen extends StatelessWidget {
                           fontFamily: "Future",
                           fontSize: 24)),
                   Text(sneaker.size.toStringAsFixed(0),
-                      style: const TextStyle(
-                          color: Color(0xFF6F2DFF),
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary,
                           fontWeight: FontWeight.bold,
                           fontFamily: "Future",
                           fontSize: 24)),
@@ -119,7 +119,7 @@ class DetailScreen extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                         shape: const CircleBorder(),
                         padding: const EdgeInsets.all(20)),
-                    child: const Icon(Icons.favorite, color: Color(0xFF6F2DFF)),
+                    child: Icon(Icons.favorite, color: Theme.of(context).colorScheme.secondary),
                   ),
                   const SizedBox(width: 40),
                   ElevatedButton(
@@ -149,10 +149,10 @@ class DetailScreen extends StatelessWidget {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                       children: <Widget>[
-                                      const Text("You Paid: ", style: TextStyle(
+                                      Text("You Paid: ", style: TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
-                                        color: Color(0xFF6F2DFF)
+                                        color: Theme.of(context).colorScheme.secondary
                                       )),
                                       SizedBox(
                                         width: 100,
@@ -162,8 +162,8 @@ class DetailScreen extends StatelessWidget {
                                           decoration: InputDecoration(
                                             border: OutlineInputBorder(
                                               borderRadius: BorderRadius.circular(10),
-                                              borderSide: const BorderSide(
-                                                color: Color(0xFF6F2DFF),
+                                              borderSide: BorderSide(
+                                                color: Theme.of(context).colorScheme.secondary,
                                               ),
                                             ),
                                             suffixIcon: const Icon(Icons.attach_money),
@@ -179,10 +179,10 @@ class DetailScreen extends StatelessWidget {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                       children: <Widget>[
-                                      const Text("You Own: ", style: TextStyle(
+                                      Text("You Own: ", style: TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
-                                        color: Color(0xFF6F2DFF)
+                                        color: Theme.of(context).colorScheme.secondary
                                       )),
                                       SizedBox(
                                         width: 100,
@@ -192,8 +192,8 @@ class DetailScreen extends StatelessWidget {
                                           decoration: InputDecoration(
                                             border: OutlineInputBorder(
                                               borderRadius: BorderRadius.circular(10),
-                                              borderSide: const BorderSide(
-                                                color: Color(0xFF6F2DFF),
+                                              borderSide: BorderSide(
+                                                color: Theme.of(context).colorScheme.secondary,
                                               ),
                                             ),
                                             hintText: sneaker.count.toStringAsFixed(0),
@@ -208,10 +208,10 @@ class DetailScreen extends StatelessWidget {
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                         children: <Widget>[
-                                          const Text("Your Size: ", style: TextStyle(
+                                          Text("Your Size: ", style: TextStyle(
                                             fontSize: 20,
                                             fontWeight: FontWeight.bold,
-                                            color: Color(0xFF6F2DFF)
+                                            color: Theme.of(context).colorScheme.secondary
                                           )),
                                           SizedBox(
                                             width: 100,
@@ -227,14 +227,14 @@ class DetailScreen extends StatelessWidget {
                                         Navigator.pop(context);
                                       },
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: const Color(0xFF6F2DFF),
+                                        backgroundColor: Theme.of(context).colorScheme.secondary,
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(20),
                                         ),
                                         padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                                       ),
-                                      child: const Text("SAVE", style: TextStyle(
-                                        color: Colors.white,
+                                      child: Text("SAVE", style: TextStyle(
+                                        color: Theme.of(context).colorScheme.tertiary,
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
                                         fontFamily: "Future",
@@ -252,7 +252,7 @@ class DetailScreen extends StatelessWidget {
                       shape: const CircleBorder(),
                       padding: const EdgeInsets.all(20),
                     ),
-                    child: const Icon(Icons.edit, color: Color(0xFF6F2DFF)),
+                    child: Icon(Icons.edit, color: Theme.of(context).colorScheme.secondary),
                   ),
                 ],
               )

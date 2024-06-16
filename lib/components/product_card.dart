@@ -16,7 +16,7 @@ class ProductCard extends StatelessWidget {
       child: SizedBox(
         height: 160,
         child: Card(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.primary,
           margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
           child: Column(
             children: <Widget>[
@@ -55,8 +55,8 @@ class ProductCard extends StatelessWidget {
                     ),
                     Text(
                       '\$${sneaker.price.toStringAsFixed(0)}',
-                      style: const TextStyle(
-                        color: Color(0xFF6F2DFF),
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.secondary,
                         fontWeight: FontWeight.bold,
                         fontFamily: "Future",
                         fontSize: 16,
@@ -80,7 +80,7 @@ class ProductCard extends StatelessWidget {
                       shape: const CircleBorder(),
                       padding: const EdgeInsets.all(10),
                     ),
-                    child: const Icon(Icons.star, color: Color(0xFF6F2DFF)),
+                    child: Icon(Icons.star, color: Theme.of(context).colorScheme.secondary),
                   ),
                   ElevatedButton(
                     onPressed: () {
@@ -94,7 +94,7 @@ class ProductCard extends StatelessWidget {
                       shape: const CircleBorder(),
                       padding: const EdgeInsets.all(10),
                     ),
-                    child: const Icon(Icons.favorite, color: Color(0xFF6F2DFF)),
+                    child: Icon(Icons.favorite, color: Theme.of(context).colorScheme.secondary),
                   ),
                 ],
               ),

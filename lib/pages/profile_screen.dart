@@ -29,6 +29,7 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -62,10 +63,10 @@ class _ProfileState extends State<Profile> {
                 ),
                 const SizedBox(height: 10),
                 Text(user.name,
-                    style: const TextStyle(
+                    style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF6F2DFF))),
+                        color: Theme.of(context).colorScheme.secondary)),
                 Text(user.since, style: const TextStyle(fontSize: 15)),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 50, left: 25, right: 25, top: 50),
@@ -74,20 +75,20 @@ class _ProfileState extends State<Profile> {
                     height: MediaQuery.of(context).size.height - 500,
                     alignment: Alignment.topCenter,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.primary,
                       borderRadius: BorderRadius.circular(50),
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         //Username
-                        const Align(
+                        Align(
                           alignment: Alignment.centerLeft,
                           child: Padding(
-                            padding: EdgeInsets.only(left: 50, bottom: 5),
+                            padding: const EdgeInsets.only(left: 50, bottom: 5),
                             child: Text("USERNAME",
                                 style: TextStyle(
-                                    fontSize: 15, color: Color(0xFF6F2DFF))),
+                                    fontSize: 15, color: Theme.of(context).colorScheme.secondary)),
                           ),
                         ),
                         Padding(
@@ -97,8 +98,8 @@ class _ProfileState extends State<Profile> {
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                  color: Color(0xFF6F2DFF),
+                                borderSide: BorderSide(
+                                  color: Theme.of(context).colorScheme.secondary,
                                 ),
                               ),
                               suffixIcon: const Icon(Icons.person),
@@ -109,13 +110,13 @@ class _ProfileState extends State<Profile> {
                   
                         //Passwort
                         const SizedBox(height: 20),
-                        const Align(
+                        Align(
                           alignment: Alignment.centerLeft,
                           child: Padding(
-                            padding: EdgeInsets.only(left: 50, bottom: 5),
+                            padding: const EdgeInsets.only(left: 50, bottom: 5),
                             child: Text("PASSWORD",
                                 style: TextStyle(
-                                    fontSize: 15, color: Color(0xFF6F2DFF))),
+                                    fontSize: 15, color: Theme.of(context).colorScheme.secondary)),
                           ),
                         ),
                         Padding(
@@ -126,8 +127,8 @@ class _ProfileState extends State<Profile> {
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                  color: Color(0xFF6F2DFF),
+                                borderSide: BorderSide(
+                                  color: Theme.of(context).colorScheme.secondary,
                                 ),
                               ),
                               suffixIcon: const Icon(Icons.lock),
@@ -145,8 +146,8 @@ class _ProfileState extends State<Profile> {
                               saveData(context);
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF6F2DFF),
-                              foregroundColor: Colors.white,
+                              backgroundColor: Theme.of(context).colorScheme.secondary,
+                              foregroundColor: Theme.of(context).colorScheme.tertiary,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20),
                               ),

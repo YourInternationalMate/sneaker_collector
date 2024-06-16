@@ -10,11 +10,11 @@ class BuyingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.primary,
       appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          iconTheme: const IconThemeData(color: Colors.black),
+          iconTheme: IconThemeData(color: Theme.of(context).colorScheme.tertiary),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
@@ -23,8 +23,8 @@ class BuyingScreen extends StatelessWidget {
           ),
           title: Text(
             "${sneaker.brand} ${sneaker.model}",
-            style: const TextStyle(
-                color: Colors.black,
+            style: TextStyle(
+                color: Theme.of(context).colorScheme.tertiary,
                 fontWeight: FontWeight.bold,
                 fontFamily: "Future",
                 fontSize: 24),
@@ -41,8 +41,8 @@ class BuyingScreen extends StatelessWidget {
                       fontFamily: "Future",
                       fontSize: 24)),
               Text('\$${sneaker.price.toStringAsFixed(0)}',
-                  style: const TextStyle(
-                      color: Color(0xFF6F2DFF),
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.secondary,
                       fontWeight: FontWeight.bold,
                       fontFamily: "Future",
                       fontSize: 24)),
@@ -60,10 +60,10 @@ class BuyingScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(15),
                     ),
                   ),
-                  child: const Text(
+                  child: Text(
                     'StockX',
                     style: TextStyle(
-                        color: Color(0xFF6F2DFF),
+                        color: Theme.of(context).colorScheme.secondary,
                         fontWeight: FontWeight.bold,
                         fontFamily: "Future",
                         fontSize: 24),
@@ -84,10 +84,10 @@ class BuyingScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(15),
                     ),
                   ),
-                  child: const Text(
+                  child: Text(
                     'GOAT',
                     style: TextStyle(
-                        color: Color(0xFF6F2DFF),
+                        color: Theme.of(context).colorScheme.secondary,
                         fontWeight: FontWeight.bold,
                         fontFamily: "Future",
                         fontSize: 24),

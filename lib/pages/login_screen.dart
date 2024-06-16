@@ -34,7 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true, // Wichtig für die Anpassung bei Tastatureinblendung
-      backgroundColor: Colors.black, //TODO: Hintergrund Farbe anpassen
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Center(
         child: SingleChildScrollView(
           child: Column(
@@ -56,15 +56,15 @@ class _LoginScreenState extends State<LoginScreen> {
                       });
                     },
                     child: isLogin
-                        ? const Text(
+                        ? Text(
                             'No account yet? Register here!',
                             style: TextStyle(
-                                color: Colors.white, fontFamily: 'future'),
+                                color: Theme.of(context).colorScheme.tertiary, fontFamily: 'future'),
                           )
-                        : const Text(
+                        : Text(
                             'Already have an account? Login here!',
                             style: TextStyle(
-                                color: Colors.white, fontFamily: 'future'),
+                                color: Theme.of(context).colorScheme.tertiary, fontFamily: 'future'),
                           ),
                   ),
                 ],
@@ -82,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
       padding: const EdgeInsets.all(20), // Padding hinzugefügt
       alignment: Alignment.topCenter,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.primary,
         borderRadius: BorderRadius.circular(50),
       ),
       child: Column(
@@ -98,20 +98,42 @@ class _LoginScreenState extends State<LoginScreen> {
           const SizedBox(height: 20),
           TextField(
             controller: _usernameController,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.tertiary, 
+                  width: 1.0,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.secondary, 
+                  width: 1.0,
+                ),
+              ),
               labelText: 'USERNAME',
-              labelStyle: TextStyle(fontFamily: 'future'),
+              labelStyle: TextStyle(fontFamily: 'future', color: Theme.of(context).colorScheme.tertiary),
             ),
           ),
           const SizedBox(height: 20),
           TextField(
             controller: _passwordController,
             obscureText: true,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.tertiary, 
+                  width: 1.0,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.secondary, 
+                  width: 1.0,
+                ),
+              ),
               labelText: 'PASSWORD',
-              labelStyle: TextStyle(fontFamily: 'future'),
+              labelStyle: TextStyle(fontFamily: 'future', color: Theme.of(context).colorScheme.tertiary),
             ),
           ),
           const SizedBox(height: 20),
@@ -120,8 +142,8 @@ class _LoginScreenState extends State<LoginScreen> {
               checkLogin(context);
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF6F2DFF),
-              foregroundColor: Colors.black,
+              backgroundColor: Theme.of(context).colorScheme.secondary,
+              foregroundColor: Theme.of(context).colorScheme.tertiary,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
@@ -143,7 +165,7 @@ class _LoginScreenState extends State<LoginScreen> {
       padding: const EdgeInsets.all(20), // Padding hinzugefügt
       alignment: Alignment.topCenter,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.primary,
         borderRadius: BorderRadius.circular(50),
       ),
       child: Column(
@@ -159,20 +181,42 @@ class _LoginScreenState extends State<LoginScreen> {
           const SizedBox(height: 20),
           TextField(
             controller: _registerUsernameController,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.tertiary, 
+                  width: 1.0,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.secondary, 
+                  width: 1.0,
+                ),
+              ),
               labelText: 'USERNAME',
-              labelStyle: TextStyle(fontFamily: 'future'),
+              labelStyle: TextStyle(fontFamily: 'future', color: Theme.of(context).colorScheme.tertiary),
             ),
           ),
           const SizedBox(height: 20),
           TextField(
             controller: _registerPasswordController,
             obscureText: true,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.tertiary, 
+                  width: 1.0,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.secondary, 
+                  width: 1.0,
+                ),
+              ),
               labelText: 'PASSWORD',
-              labelStyle: TextStyle(fontFamily: 'future'),
+              labelStyle: TextStyle(fontFamily: 'future', color: Theme.of(context).colorScheme.tertiary),
             ),
           ),
           const SizedBox(height: 20),
@@ -181,8 +225,8 @@ class _LoginScreenState extends State<LoginScreen> {
               checkRegistration(context);
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF6F2DFF),
-              foregroundColor: Colors.black,
+              backgroundColor: Theme.of(context).colorScheme.secondary,
+              foregroundColor: Theme.of(context).colorScheme.tertiary,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),

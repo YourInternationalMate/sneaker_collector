@@ -40,6 +40,7 @@ class Collection extends StatelessWidget {
   Widget build(BuildContext context) {
     addItemsTo(); // aktuell nur Beispiel-Produkte
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
