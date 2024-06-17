@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:sneaker_collector/models/user.dart';
-import 'package:sneaker_collector/utilities/constants.dart';
 
 class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);

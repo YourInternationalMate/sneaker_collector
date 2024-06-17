@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:sneaker_collector/models/sneaker.dart';
 import 'package:sneaker_collector/components/product_card.dart';
 import 'package:sneaker_collector/pages/detail_screen.dart';
-import 'package:sneaker_collector/utilities/constants.dart';
 
 class Collection extends StatelessWidget {
   Collection({super.key});
