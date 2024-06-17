@@ -16,34 +16,35 @@ class Favorites extends StatelessWidget {
     addItemsTo();
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            SizedBox(height: Constants.isAndroid ? 30 : 70,),
-            const Text(
-              '"Favorites"',
-              style: TextStyle(
-                fontSize: 40,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'future',
+      body: SafeArea(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Text(
+                '"Favorites"',
+                style: TextStyle(
+                  fontSize: 40,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'future',
+                ),
               ),
-            ),
-            const SizedBox(height: 10),
-            Expanded(
-              child: sneakers.isEmpty
-                  ? const Text(
-                      "You've not added any favorites yet.",
-                      style: TextStyle(fontSize: 18),
-                    )
-                  : ListView.builder(
-                      itemCount: sneakers.length,
-                      itemBuilder: (context, index) {
-                        return ProductCard(sneakers[index], onTapFunction: () => navigateToBuyingScreen(context, sneakers[index]));
-                      },
-                    ),
-            ),
-          ],
+              const SizedBox(height: 10),
+              Expanded(
+                child: sneakers.isEmpty
+                    ? const Text(
+                        "You've not added any favorites yet.",
+                        style: TextStyle(fontSize: 18),
+                      )
+                    : ListView.builder(
+                        itemCount: sneakers.length,
+                        itemBuilder: (context, index) {
+                          return ProductCard(sneakers[index], onTapFunction: () => navigateToBuyingScreen(context, sneakers[index]));
+                        },
+                      ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -48,58 +48,59 @@ class _SearchScreenState extends State<Search> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            SizedBox(height: Constants.isAndroid ? 30 : 70,),
-            const Text(
-              '"Search"',
-              style: TextStyle(
-                fontSize: 40,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'future',
+      body: SafeArea(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Text(
+                '"Search"',
+                style: TextStyle(
+                  fontSize: 40,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'future',
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
-            Theme(
-              data: ThemeData(primaryColor: Theme.of(context).colorScheme.secondary),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: TextField(
-                  controller: searchController,
-                  decoration: InputDecoration(
-                    labelText: "Search",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(
-                        color: Theme.of(context).colorScheme.secondary,
+              const SizedBox(height: 20),
+              Theme(
+                data: ThemeData(primaryColor: Theme.of(context).colorScheme.secondary),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: TextField(
+                    controller: searchController,
+                    decoration: InputDecoration(
+                      labelText: "Search",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
                       ),
+                      prefixIcon: Icon(Icons.search),
                     ),
-                    prefixIcon: Icon(Icons.search),
                   ),
                 ),
               ),
-            ),
-            Expanded(
-              child: filteredSneakers.isEmpty
-                  ? const Column(children: <Widget>[
-                      SizedBox(height: 20),
-                      Text(
-                        "No sneakers found.",
-                        style: TextStyle(fontSize: 18),
+              Expanded(
+                child: filteredSneakers.isEmpty
+                    ? const Column(children: <Widget>[
+                        SizedBox(height: 20),
+                        Text(
+                          "No sneakers found.",
+                          style: TextStyle(fontSize: 18),
+                        ),
+                      ])
+                    : ListView.builder(
+                        itemCount: filteredSneakers.length,
+                        itemBuilder: (context, index) {
+                          return ProductCard(filteredSneakers[index],
+                              onTapFunction: () => navigateToBuyingScreen(
+                                  context, sneakers[index]));
+                        },
                       ),
-                    ])
-                  : ListView.builder(
-                      itemCount: filteredSneakers.length,
-                      itemBuilder: (context, index) {
-                        return ProductCard(filteredSneakers[index],
-                            onTapFunction: () => navigateToBuyingScreen(
-                                context, sneakers[index]));
-                      },
-                    ),
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
       ),
     );
