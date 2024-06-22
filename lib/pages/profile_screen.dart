@@ -20,9 +20,16 @@ class _ProfileState extends State<Profile> {
       since: "01.01.2021");
 
   void saveData(BuildContext context) {
-    print(_usernameController.text +
-        " " +
-        _passwordController.text); //TODO: Daten speichern
+    setState(() {
+      user.name = _usernameController.text.isNotEmpty
+          ? _usernameController.text
+          : user.name;
+      user.password = _passwordController.text.isNotEmpty
+          ? _passwordController.text
+          : user.password;
+    });
+    _usernameController.clear();
+    _passwordController.clear(); //TODO: Daten speichern
   }
 
   @override
@@ -66,7 +73,7 @@ class _ProfileState extends State<Profile> {
                           color: Theme.of(context).colorScheme.secondary)),
                   Text(user.since, style: const TextStyle(fontSize: 15)),
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 50, left: 25, right: 25, top: 50),
+                    padding: const EdgeInsets.only(left: 25, right: 25, top: 20),
                     child: Container(
                       width: MediaQuery.of(context).size.width,
                       height: MediaQuery.of(context).size.height - 500,
@@ -82,25 +89,38 @@ class _ProfileState extends State<Profile> {
                           Align(
                             alignment: Alignment.centerLeft,
                             child: Padding(
-                              padding: const EdgeInsets.only(left: 50, bottom: 5),
+                              padding:
+                                  const EdgeInsets.only(left: 50, bottom: 5),
                               child: Text("USERNAME",
                                   style: TextStyle(
-                                      fontSize: 15, color: Theme.of(context).colorScheme.secondary)),
+                                      fontSize: 15,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary)),
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 50.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 50.0),
                             child: TextField(
                               controller: _usernameController,
                               decoration: InputDecoration(
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                   borderSide: BorderSide(
-                                    color: Theme.of(context).colorScheme.secondary,
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
                                   ),
                                 ),
                                 suffixIcon: const Icon(Icons.person),
                                 hintText: user.name,
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
@@ -110,14 +130,19 @@ class _ProfileState extends State<Profile> {
                           Align(
                             alignment: Alignment.centerLeft,
                             child: Padding(
-                              padding: const EdgeInsets.only(left: 50, bottom: 5),
+                              padding:
+                                  const EdgeInsets.only(left: 50, bottom: 5),
                               child: Text("PASSWORD",
                                   style: TextStyle(
-                                      fontSize: 15, color: Theme.of(context).colorScheme.secondary)),
+                                      fontSize: 15,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary)),
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 50.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 50.0),
                             child: TextField(
                               controller: _passwordController,
                               obscureText: true,
@@ -125,11 +150,19 @@ class _ProfileState extends State<Profile> {
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                   borderSide: BorderSide(
-                                    color: Theme.of(context).colorScheme.secondary,
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
                                   ),
                                 ),
                                 suffixIcon: const Icon(Icons.lock),
                                 hintText: "•" * user.password.length,
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
@@ -143,8 +176,10 @@ class _ProfileState extends State<Profile> {
                                 saveData(context);
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Theme.of(context).colorScheme.secondary,
-                                foregroundColor: Theme.of(context).colorScheme.tertiary,
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.secondary,
+                                foregroundColor:
+                                    Theme.of(context).colorScheme.tertiary,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20),
                                 ),
@@ -157,7 +192,9 @@ class _ProfileState extends State<Profile> {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 20,)
+                          const SizedBox(
+                            height: 20,
+                          )
                         ],
                       ),
                     ),
