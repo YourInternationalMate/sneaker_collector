@@ -4,12 +4,14 @@ import 'package:sneaker_collector/components/shoe_size_dropdown.dart';
 
 class DetailScreen extends StatelessWidget {
   final Sneaker sneaker;
-  final TextEditingController _purchasePriceController = TextEditingController();
+  final TextEditingController _purchasePriceController =
+      TextEditingController();
   final TextEditingController _amountController = TextEditingController();
 
   DetailScreen({super.key, required this.sneaker});
 
   void saveChanges() {
+    // Save Entries made in the Changing Dialog + check what changed
     print(double.parse(_purchasePriceController.text));
     print(int.parse(_amountController.text));
   }
@@ -21,13 +23,15 @@ class DetailScreen extends StatelessWidget {
       appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          iconTheme: IconThemeData(color: Theme.of(context).colorScheme.tertiary),
+          iconTheme:
+              IconThemeData(color: Theme.of(context).colorScheme.tertiary),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
               Navigator.pop(context);
             },
           ),
+          // Sneaker name on top of Page as Heading
           title: Text(
             "${sneaker.brand} ${sneaker.model}",
             style: TextStyle(
@@ -41,7 +45,9 @@ class DetailScreen extends StatelessWidget {
           margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
           child: Column(
             children: <Widget>[
-              Image.asset(sneaker.imageUrl), //TODO: Bild über URL laden
+              // Picture of Sneaker + Details
+              Image.asset(
+                  sneaker.imageUrl), //TODO: Load images from URL not assets
               Text(sneaker.name,
                   style: const TextStyle(
                       fontWeight: FontWeight.bold,
@@ -54,6 +60,9 @@ class DetailScreen extends StatelessWidget {
                       fontFamily: "Future",
                       fontSize: 24)),
               const SizedBox(height: 70),
+
+              // Details the of the owned shoe; Personal to user
+              // How much user spend
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
@@ -71,6 +80,8 @@ class DetailScreen extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 50),
+
+              // How many user owns
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
@@ -88,6 +99,8 @@ class DetailScreen extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 50),
+
+              // What size it is
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
@@ -105,9 +118,12 @@ class DetailScreen extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 50),
+
+              // Buttons to edit details and to add to Favs
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  // Add to Favs
                   ElevatedButton(
                     onPressed: () {
                       if (sneaker.inFavorites) {
@@ -119,140 +135,21 @@ class DetailScreen extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                         shape: const CircleBorder(),
                         padding: const EdgeInsets.all(20)),
-                    child: Icon(Icons.favorite, color: Theme.of(context).colorScheme.secondary),
+                    child: Icon(Icons.favorite,
+                        color: Theme.of(context).colorScheme.secondary),
                   ),
                   const SizedBox(width: 40),
+                  // Edit Details
                   ElevatedButton(
                     onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 200),
-                            child: AlertDialog(
-                              title: const Align(
-                                alignment: Alignment.center,
-                                child: Text('"Edit Sneaker"', style: TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: "Future",
-                                ),),
-                              ),
-                              content: Container(
-                                alignment: Alignment.center,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                  children: <Widget>[
-                                    const SizedBox(
-                                      height: 20,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                      children: <Widget>[
-                                      Text("You Paid: ", style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        color: Theme.of(context).colorScheme.secondary
-                                      )),
-                                      SizedBox(
-                                        width: 100,
-                                        height: 50,
-                                        child: TextField(
-                                          controller: _purchasePriceController,
-                                          decoration: InputDecoration(
-                                            border: OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(10),
-                                              borderSide: BorderSide(
-                                                color: Theme.of(context).colorScheme.secondary,
-                                              ),
-                                            ),
-                                            suffixIcon: const Icon(Icons.attach_money),
-                                            hintText: sneaker.purchasePrice.toStringAsFixed(0),
-                                          ),
-                                        ),
-                                      ),
-                                        ],
-                                        ),
-                                        const SizedBox(
-                                      height: 20,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                      children: <Widget>[
-                                      Text("You Own: ", style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        color: Theme.of(context).colorScheme.secondary
-                                      )),
-                                      SizedBox(
-                                        width: 100,
-                                        height: 50,
-                                        child: TextField(
-                                          controller: _amountController,
-                                          decoration: InputDecoration(
-                                            border: OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(10),
-                                              borderSide: BorderSide(
-                                                color: Theme.of(context).colorScheme.secondary,
-                                              ),
-                                            ),
-                                            hintText: sneaker.count.toStringAsFixed(0),
-                                          ),
-                                        ),
-                                      ),
-                                        ],
-                                        ),
-                                        const SizedBox(
-                                        height: 20,
-                                      ),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                        children: <Widget>[
-                                          Text("Your Size: ", style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                            color: Theme.of(context).colorScheme.secondary
-                                          )),
-                                          SizedBox(
-                                            width: 100,
-                                            height: 50,
-                                            child: ShoeSizeDropdown(initialSize: sneaker.size.toStringAsFixed(1)),
-                                          ),
-                                    ],
-                                    ),
-                                    const SizedBox(height: 20),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        saveChanges();
-                                        Navigator.pop(context);
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Theme.of(context).colorScheme.secondary,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(20),
-                                        ),
-                                        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-                                      ),
-                                      child: Text("SAVE", style: TextStyle(
-                                        color: Theme.of(context).colorScheme.tertiary,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: "Future",
-                                      )),
-                                    ),
-                                  ],
-                                  ),
-                              ),
-                                ),
-                          );
-                        },
-                      );
+                      editDialog(context);
                     },
                     style: ElevatedButton.styleFrom(
                       shape: const CircleBorder(),
                       padding: const EdgeInsets.all(20),
                     ),
-                    child: Icon(Icons.edit, color: Theme.of(context).colorScheme.secondary),
+                    child: Icon(Icons.edit,
+                        color: Theme.of(context).colorScheme.secondary),
                   ),
                 ],
               )
@@ -260,6 +157,147 @@ class DetailScreen extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  // Menu to edit sneaker details
+  Future<dynamic> editDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 200),
+          child: AlertDialog(
+            title: const Align(
+              alignment: Alignment.center,
+              // Heading
+              child: Text(
+                '"Edit Sneaker"',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: "Future",
+                ),
+              ),
+            ),
+            content: Container(
+              alignment: Alignment.center,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  // Edit paid amount
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Text("You Paid: ",
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.secondary)),
+                      SizedBox(
+                        width: 100,
+                        height: 50,
+                        child: TextField(
+                          controller: _purchasePriceController,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                            ),
+                            suffixIcon: const Icon(Icons.attach_money),
+                            hintText: sneaker.purchasePrice.toStringAsFixed(0),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+
+                  // Edit quantity
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Text("You Own: ",
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.secondary)),
+                      SizedBox(
+                        width: 100,
+                        height: 50,
+                        child: TextField(
+                          controller: _amountController,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                            ),
+                            hintText: sneaker.count.toStringAsFixed(0),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+
+                  // Edit size
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Text("Your Size: ",
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.secondary)),
+                      SizedBox(
+                        width: 100,
+                        height: 50,
+                        child: ShoeSizeDropdown(
+                            initialSize: sneaker.size.toStringAsFixed(1)),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Save Changes
+                  ElevatedButton(
+                    onPressed: () {
+                      saveChanges();
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 50, vertical: 10),
+                    ),
+                    child: Text("SAVE",
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.tertiary,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: "Future",
+                        )),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

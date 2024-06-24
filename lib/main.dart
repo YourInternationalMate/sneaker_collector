@@ -31,7 +31,6 @@ class MyApp extends StatelessWidget {
       darkTheme: darkMode,
       initialRoute: '/',
       routes: {
-        // routing zwischen den Seiten
         '/': (context) => LoginScreen(),
         '/home': (context) => HomeScreen()
       },

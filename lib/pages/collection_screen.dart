@@ -9,7 +9,8 @@ class Collection extends StatelessWidget {
   final List<Sneaker> sneakers = [];
 
   void addItemsTo() {
-    // Hier können Produkte hinzugefügt werden
+    // creation test list (func needs to be removed)
+
     for (int i = 0; i < 10; i++) {
       sneakers.add(Sneaker(
           brand: "Adidas",
@@ -26,7 +27,7 @@ class Collection extends StatelessWidget {
   }
 
   void navigateToDetailScreen(BuildContext context, Sneaker sneaker) {
-    // Hier wird auf die Detailseite navigiert
+    // navigate to Detail Screen
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -37,7 +38,7 @@ class Collection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    addItemsTo(); // aktuell nur Beispiel-Produkte
+    addItemsTo(); // needs to be removed
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
@@ -45,6 +46,7 @@ class Collection extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              // Heading
               const Text(
                 '"Collection"',
                 style: TextStyle(
@@ -54,6 +56,8 @@ class Collection extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
+
+              // List of all Sneakers in Collection
               Expanded(
                 child: sneakers.isEmpty
                     ? const Text(

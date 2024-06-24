@@ -23,7 +23,7 @@ class _SearchScreenState extends State<Search> {
   }
 
   void filterSneakers() {
-    // Wenn gesucht wird, wird hier die Liste gefiltert
+    // list that adapts to search parameters
     List<Sneaker> _sneakers = [];
     _sneakers.addAll(sneakers);
     if (searchController.text.isNotEmpty) {
@@ -43,70 +43,8 @@ class _SearchScreenState extends State<Search> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      body: SafeArea(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              const Text(
-                '"Search"',
-                style: TextStyle(
-                  fontSize: 40,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'future',
-                ),
-              ),
-              const SizedBox(height: 20),
-              Theme(
-                data: ThemeData(primaryColor: Theme.of(context).colorScheme.secondary),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: TextField(
-                    controller: searchController,
-                    decoration: InputDecoration(
-                      labelText: "Search",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide(
-                          color: Theme.of(context).colorScheme.secondary,
-                        ),
-                      ),
-                      prefixIcon: Icon(Icons.search),
-                    ),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: filteredSneakers.isEmpty
-                    ? const Column(children: <Widget>[
-                        SizedBox(height: 20),
-                        Text(
-                          "No sneakers found.",
-                          style: TextStyle(fontSize: 18),
-                        ),
-                      ])
-                    : ListView.builder(
-                        itemCount: filteredSneakers.length,
-                        itemBuilder: (context, index) {
-                          return ProductCard(filteredSneakers[index],
-                              onTapFunction: () => navigateToBuyingScreen(
-                                  context, sneakers[index]));
-                        },
-                      ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   void navigateToBuyingScreen(BuildContext context, Sneaker sneaker) {
-    // Hier wird auf die Detailseite navigiert
+    // Navigation to Detail Screen
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -116,7 +54,7 @@ class _SearchScreenState extends State<Search> {
   }
 
   void addItemsTo() {
-    // Hier können Produkte hinzugefügt werden
+    // list of shoes that gets shown on the page (currently mock data)
 
     sneakers.add(Sneaker(
         brand: "Adidas",
@@ -143,5 +81,73 @@ class _SearchScreenState extends State<Search> {
         inFavorites: false));
 
     filteredSneakers = sneakers;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      body: SafeArea(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Text(
+                // Heading
+                '"Search"',
+                style: TextStyle(
+                  fontSize: 40,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'future',
+                ),
+              ),
+              const SizedBox(height: 20),
+              Theme(
+                data: ThemeData(
+                    primaryColor: Theme.of(context).colorScheme.secondary),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+
+                  // Search field
+                  child: TextField(
+                    controller: searchController,
+                    decoration: InputDecoration(
+                      labelText: "Search",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                      ),
+                      prefixIcon: Icon(Icons.search),
+                    ),
+                  ),
+                ),
+              ),
+
+              // list of trending sneakers or filtered list
+              Expanded(
+                child: filteredSneakers.isEmpty
+                    ? const Column(children: <Widget>[
+                        SizedBox(height: 20),
+                        Text(
+                          "No sneakers found.",
+                          style: TextStyle(fontSize: 18),
+                        ),
+                      ])
+                    : ListView.builder(
+                        itemCount: filteredSneakers.length,
+                        itemBuilder: (context, index) {
+                          return ProductCard(filteredSneakers[index],
+                              onTapFunction: () => navigateToBuyingScreen(
+                                  context, sneakers[index]));
+                        },
+                      ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

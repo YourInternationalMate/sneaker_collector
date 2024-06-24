@@ -15,18 +15,22 @@ class ProductCard extends StatelessWidget {
       },
       child: SizedBox(
         height: 160,
+
+        // Product card for sneaker
         child: Card(
           color: Theme.of(context).colorScheme.primary,
           margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
           child: Column(
             children: <Widget>[
               ListTile(
+                // image of sneaker
                 leading: SizedBox(
                     width: 140,
                     height: 100,
-                    child: Image.asset(
-                        sneaker.imageUrl) //TODO: Bild über URL laden
+                    child: Image.asset(sneaker
+                        .imageUrl) //TODO: Load pictues via network, not assets
                     ),
+                // Name of the Sneaker
                 title: Align(
                   alignment: Alignment.topLeft,
                   child: Text(
@@ -40,6 +44,8 @@ class ProductCard extends StatelessWidget {
                     maxLines: 1,
                   ),
                 ),
+
+                // Sneaker Details
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
@@ -65,6 +71,8 @@ class ProductCard extends StatelessWidget {
                   ],
                 ),
               ),
+
+              // Buttons to add sneaker to Collection or Favs
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
@@ -80,7 +88,8 @@ class ProductCard extends StatelessWidget {
                       shape: const CircleBorder(),
                       padding: const EdgeInsets.all(10),
                     ),
-                    child: Icon(Icons.star, color: Theme.of(context).colorScheme.secondary),
+                    child: Icon(Icons.star,
+                        color: Theme.of(context).colorScheme.secondary),
                   ),
                   ElevatedButton(
                     onPressed: () {
@@ -94,7 +103,8 @@ class ProductCard extends StatelessWidget {
                       shape: const CircleBorder(),
                       padding: const EdgeInsets.all(10),
                     ),
-                    child: Icon(Icons.favorite, color: Theme.of(context).colorScheme.secondary),
+                    child: Icon(Icons.favorite,
+                        color: Theme.of(context).colorScheme.secondary),
                   ),
                 ],
               ),

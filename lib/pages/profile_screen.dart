@@ -41,6 +41,7 @@ class _ProfileState extends State<Profile> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
+              // Heading
               const Text(
                 '"Profile"',
                 style: TextStyle(
@@ -53,6 +54,7 @@ class _ProfileState extends State<Profile> {
               Column(
                 children: <Widget>[
                   const SizedBox(height: 30),
+                  // Profile Picture
                   Container(
                     width: 100,
                     height: 100,
@@ -66,6 +68,7 @@ class _ProfileState extends State<Profile> {
                     ),
                   ),
                   const SizedBox(height: 10),
+                  // Username + Date since Acc Creation
                   Text(user.name,
                       style: TextStyle(
                           fontSize: 20,
@@ -73,7 +76,10 @@ class _ProfileState extends State<Profile> {
                           color: Theme.of(context).colorScheme.secondary)),
                   Text(user.since, style: const TextStyle(fontSize: 15)),
                   Padding(
-                    padding: const EdgeInsets.only(left: 25, right: 25, top: 20),
+                    padding:
+                        const EdgeInsets.only(left: 25, right: 25, top: 20),
+
+                    // field to change username + password
                     child: Container(
                       width: MediaQuery.of(context).size.width,
                       height: MediaQuery.of(context).size.height - 500,
@@ -85,7 +91,7 @@ class _ProfileState extends State<Profile> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          //Username
+                          // edit Username
                           Align(
                             alignment: Alignment.centerLeft,
                             child: Padding(
@@ -124,8 +130,8 @@ class _ProfileState extends State<Profile> {
                               ),
                             ),
                           ),
-                    
-                          //Passwort
+
+                          // edit Password
                           const SizedBox(height: 20),
                           Align(
                             alignment: Alignment.centerLeft,
@@ -166,8 +172,8 @@ class _ProfileState extends State<Profile> {
                               ),
                             ),
                           ),
-                    
-                          //Save Button
+
+                          // Save Button, to save entries
                           const SizedBox(height: 30),
                           SizedBox(
                             width: 250,

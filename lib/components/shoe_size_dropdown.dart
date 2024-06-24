@@ -1,25 +1,5 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('US Schuhgrößen Dropdown'),
-        ),
-        body: ShoeSizeDropdown(
-          initialSize: '10', // Beispiel für die Übergabe einer Schuhgröße
-        ),
-      ),
-    );
-  }
-}
-
 class ShoeSizeDropdown extends StatefulWidget {
   final String initialSize;
 
@@ -30,11 +10,37 @@ class ShoeSizeDropdown extends StatefulWidget {
 }
 
 class _ShoeSizeDropdownState extends State<ShoeSizeDropdown> {
-  // Liste der amerikanischen Schuhgrößen
+  // list of all american men sizes
   final List<String> usShoeSizes = [
-    '4', '4.5', '5', '5.5', '6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5',
-    '10', '10.5', '11', '11.5', '12', '12.5', '13', '13.5', '14', '14.5',
-    '15', '15.5', '16', '16.5', '17', '17.5', '18'
+    '4',
+    '4.5',
+    '5',
+    '5.5',
+    '6',
+    '6.5',
+    '7',
+    '7.5',
+    '8',
+    '8.5',
+    '9',
+    '9.5',
+    '10',
+    '10.5',
+    '11',
+    '11.5',
+    '12',
+    '12.5',
+    '13',
+    '13.5',
+    '14',
+    '14.5',
+    '15',
+    '15.5',
+    '16',
+    '16.5',
+    '17',
+    '17.5',
+    '18'
   ];
 
   String? selectedSize;
@@ -42,7 +48,6 @@ class _ShoeSizeDropdownState extends State<ShoeSizeDropdown> {
   @override
   void initState() {
     super.initState();
-    // Überprüfen, ob initialSize in der Liste der Schuhgrößen enthalten ist
     if (usShoeSizes.contains(widget.initialSize)) {
       selectedSize = widget.initialSize;
     } else {
@@ -53,6 +58,7 @@ class _ShoeSizeDropdownState extends State<ShoeSizeDropdown> {
   @override
   Widget build(BuildContext context) {
     return Center(
+      // DropDownMenu for size selection in editing menu
       child: DropdownButton<String>(
         value: selectedSize,
         hint: Text(widget.initialSize),

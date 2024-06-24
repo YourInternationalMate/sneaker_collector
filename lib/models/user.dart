@@ -1,5 +1,5 @@
 class User {
-  String name;  //nicht Final, soll man in den Settings ändern können
+  String name;
   String email;
   String password;
   String since;

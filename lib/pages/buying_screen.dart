@@ -7,6 +7,22 @@ class BuyingScreen extends StatelessWidget {
 
   const BuyingScreen({super.key, required this.sneaker});
 
+  _launchStockX() async {
+    final Uri url = Uri.parse(
+        'https://stockx.com'); //TODO: Custom URL to direct User to the shoe
+    if (!await launchUrl(url)) {
+      throw Exception('Could not launch $url');
+    }
+  }
+
+  _launchGoat() async {
+    final Uri url = Uri.parse(
+        'https://goat.com'); //TODO: Custom URL to direct User to the shoe
+    if (!await launchUrl(url)) {
+      throw Exception('Could not launch $url');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,13 +30,15 @@ class BuyingScreen extends StatelessWidget {
       appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          iconTheme: IconThemeData(color: Theme.of(context).colorScheme.tertiary),
+          iconTheme:
+              IconThemeData(color: Theme.of(context).colorScheme.tertiary),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
               Navigator.pop(context);
             },
           ),
+          // Name of Sneaker on top of the Page
           title: Text(
             "${sneaker.brand} ${sneaker.model}",
             style: TextStyle(
@@ -34,7 +52,9 @@ class BuyingScreen extends StatelessWidget {
           margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
           child: Column(
             children: <Widget>[
-              Image.asset(sneaker.imageUrl), //TODO: Bild über URL laden
+              // Picture of Sneaker + Details
+              Image.asset(
+                  sneaker.imageUrl), //TODO: load image via URL not assets
               Text(sneaker.name,
                   style: const TextStyle(
                       fontWeight: FontWeight.bold,
@@ -47,6 +67,8 @@ class BuyingScreen extends StatelessWidget {
                       fontFamily: "Future",
                       fontSize: 24)),
               const SizedBox(height: 200),
+
+              // Links to StockX and Goat to buy the Sneaker
               SizedBox(
                 width: 300,
                 height: 70,
@@ -99,20 +121,5 @@ class BuyingScreen extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  _launchStockX() async {
-    final Uri url =
-        Uri.parse('https://stockx.com'); //TODO: URL an Schuh anpassen
-    if (!await launchUrl(url)) {
-      throw Exception('Could not launch $url');
-    }
-  }
-
-  _launchGoat() async {
-    final Uri url = Uri.parse('https://goat.com'); //TODO: URL an Schuh anpassen
-    if (!await launchUrl(url)) {
-      throw Exception('Could not launch $url');
-    }
   }
 }
