@@ -9,7 +9,7 @@ class Collection extends StatelessWidget {
   final List<Sneaker> sneakers = [];
 
   void addItemsTo() {
-    // creation test list (func needs to be removed)
+    //TODO: creation test list (func needs to be removed)
 
     for (int i = 0; i < 10; i++) {
       sneakers.add(Sneaker(
@@ -19,7 +19,7 @@ class Collection extends StatelessWidget {
           imageUrl: "assets/images/adidas-Ultra-Boost-Disney-Goofy-Product.jpg",
           price: 320,
           count: 1,
-          size: 42,
+          size: 8,
           purchasePrice: 250,
           inCollection: true,
           inFavorites: false));
@@ -38,7 +38,7 @@ class Collection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    addItemsTo(); // needs to be removed
+    addItemsTo(); //TODO: needs to be removed
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(

@@ -2,18 +2,57 @@ import 'package:flutter/material.dart';
 import 'package:sneaker_collector/models/sneaker.dart';
 import 'package:sneaker_collector/components/shoe_size_dropdown.dart';
 
-class DetailScreen extends StatelessWidget {
+class DetailScreen extends StatefulWidget {
   final Sneaker sneaker;
-  final TextEditingController _purchasePriceController =
-      TextEditingController();
-  final TextEditingController _amountController = TextEditingController();
 
-  DetailScreen({super.key, required this.sneaker});
+  const DetailScreen ({ Key? key, required this.sneaker }): super(key: key);
+
+  @override
+  _DetailScreenState createState() => _DetailScreenState();
+}
+
+class _DetailScreenState extends State<DetailScreen> {
+  late TextEditingController _purchasePriceController;
+  late TextEditingController _amountController;
+  late double purchasePrice;
+  late int count;
+  late double size;
+  String _selectedSize = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _purchasePriceController = TextEditingController();
+    _amountController = TextEditingController();
+    purchasePrice = widget.sneaker.purchasePrice;
+    count = widget.sneaker.count;
+    size = widget.sneaker.size;
+  }
+
+  @override
+  void dispose() {
+    _purchasePriceController.dispose();
+    _amountController.dispose();
+    super.dispose();
+  }
 
   void saveChanges() {
-    // Save Entries made in the Changing Dialog + check what changed
-    print(double.parse(_purchasePriceController.text));
-    print(int.parse(_amountController.text));
+    if (_purchasePriceController.text.isNotEmpty) {
+      widget.sneaker.setPurchasePrice(double.parse(_purchasePriceController.text));
+    }
+    if (_amountController.text.isNotEmpty) {
+      widget.sneaker.setCount(int.parse(_amountController.text));
+    }
+    if (_selectedSize.isNotEmpty) {
+      widget.sneaker.setSize(double.parse(_selectedSize));
+    }
+    setState(() {
+      purchasePrice = widget.sneaker.purchasePrice;
+      count = widget.sneaker.count;
+      size = widget.sneaker.size;
+    });
+
+    //TODO: Datenbank update
   }
 
   @override
@@ -33,7 +72,7 @@ class DetailScreen extends StatelessWidget {
           ),
           // Sneaker name on top of Page as Heading
           title: Text(
-            "${sneaker.brand} ${sneaker.model}",
+            "${widget.sneaker.brand} ${widget.sneaker.model}",
             style: TextStyle(
                 color: Theme.of(context).colorScheme.tertiary,
                 fontWeight: FontWeight.bold,
@@ -47,13 +86,13 @@ class DetailScreen extends StatelessWidget {
             children: <Widget>[
               // Picture of Sneaker + Details
               Image.asset(
-                  sneaker.imageUrl), //TODO: Load images from URL not assets
-              Text(sneaker.name,
+                  widget.sneaker.imageUrl), //TODO: Load images from URL not assets
+              Text(widget.sneaker.name,
                   style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontFamily: "Future",
                       fontSize: 24)),
-              Text('\$${sneaker.price.toStringAsFixed(0)}',
+              Text('\$${widget.sneaker.price.toStringAsFixed(0)}',
                   style: TextStyle(
                       color: Theme.of(context).colorScheme.secondary,
                       fontWeight: FontWeight.bold,
@@ -71,7 +110,7 @@ class DetailScreen extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                           fontFamily: "Future",
                           fontSize: 24)),
-                  Text('\$${sneaker.purchasePrice.toStringAsFixed(0)}',
+                  Text('\$${purchasePrice}',
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.secondary,
                           fontWeight: FontWeight.bold,
@@ -90,7 +129,7 @@ class DetailScreen extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                           fontFamily: "Future",
                           fontSize: 24)),
-                  Text(sneaker.count.toStringAsFixed(0),
+                  Text(count.toStringAsFixed(0),
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.secondary,
                           fontWeight: FontWeight.bold,
@@ -109,7 +148,7 @@ class DetailScreen extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                           fontFamily: "Future",
                           fontSize: 24)),
-                  Text(sneaker.size.toStringAsFixed(0),
+                  Text(size.toStringAsFixed(0),
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.secondary,
                           fontWeight: FontWeight.bold,
@@ -126,10 +165,10 @@ class DetailScreen extends StatelessWidget {
                   // Add to Favs
                   ElevatedButton(
                     onPressed: () {
-                      if (sneaker.inFavorites) {
-                        sneaker.setInFavorites(false);
+                      if (widget.sneaker.inFavorites) {
+                        widget.sneaker.setInFavorites(false);
                       } else {
-                        sneaker.setInFavorites(true);
+                        widget.sneaker.setInFavorites(true);
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -209,8 +248,14 @@ class DetailScreen extends StatelessWidget {
                                 color: Theme.of(context).colorScheme.secondary,
                               ),
                             ),
+                            focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .secondary)),
                             suffixIcon: const Icon(Icons.attach_money),
-                            hintText: sneaker.purchasePrice.toStringAsFixed(0),
+                            hintText: widget.sneaker.purchasePrice.toStringAsFixed(0),
                           ),
                         ),
                       ),
@@ -241,7 +286,13 @@ class DetailScreen extends StatelessWidget {
                                 color: Theme.of(context).colorScheme.secondary,
                               ),
                             ),
-                            hintText: sneaker.count.toStringAsFixed(0),
+                            focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .secondary)),
+                            hintText: widget.sneaker.count.toStringAsFixed(0),
                           ),
                         ),
                       ),
@@ -260,12 +311,12 @@ class DetailScreen extends StatelessWidget {
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                               color: Theme.of(context).colorScheme.secondary)),
-                      SizedBox(
-                        width: 100,
-                        height: 50,
-                        child: ShoeSizeDropdown(
-                            initialSize: sneaker.size.toStringAsFixed(1)),
-                      ),
+                      ShoeSizeDropdown(
+                          onSizeSelected: (String size) {
+                            setState(() {
+                              _selectedSize = size;
+                            });
+                          }),
                     ],
                   ),
                   const SizedBox(height: 20),
@@ -286,7 +337,7 @@ class DetailScreen extends StatelessWidget {
                     ),
                     child: Text("SAVE",
                         style: TextStyle(
-                          color: Theme.of(context).colorScheme.tertiary,
+                          color: Theme.of(context).colorScheme.primary,
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                           fontFamily: "Future",

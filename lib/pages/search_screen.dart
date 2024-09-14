@@ -55,6 +55,7 @@ class _SearchScreenState extends State<Search> {
 
   void addItemsTo() {
     // list of shoes that gets shown on the page (currently mock data)
+    // TODO: replace with actual data
 
     sneakers.add(Sneaker(
         brand: "Adidas",

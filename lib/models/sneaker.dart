@@ -5,7 +5,7 @@ class Sneaker {
   final String imageUrl;
   final double price;
   int count;
-  int size;
+  double size;
   double purchasePrice;
   bool inCollection;
   bool inFavorites;
@@ -31,11 +31,15 @@ class Sneaker {
     inCollection = value;
   }
 
-  void setSize(int value) {
+  void setSize(double value) {
     size = value;
   }
 
   void setPurchasePrice(double value) {
     purchasePrice = value;
+  }
+
+  void setCount(int value) {
+    count = value;
   }
 }
