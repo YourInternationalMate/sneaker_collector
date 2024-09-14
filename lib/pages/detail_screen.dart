@@ -18,6 +18,7 @@ class _DetailScreenState extends State<DetailScreen> {
   late int count;
   late double size;
   String _selectedSize = '';
+  
 
   @override
   void initState() {
@@ -79,120 +80,122 @@ class _DetailScreenState extends State<DetailScreen> {
                 fontFamily: "Future",
                 fontSize: 24),
           )),
-      body: Center(
-        child: Container(
-          margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
-          child: Column(
-            children: <Widget>[
-              // Picture of Sneaker + Details
-              Image.asset(
-                  widget.sneaker.imageUrl), //TODO: Load images from URL not assets
-              Text(widget.sneaker.name,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontFamily: "Future",
-                      fontSize: 24)),
-              Text('\$${widget.sneaker.price.toStringAsFixed(0)}',
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.secondary,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: "Future",
-                      fontSize: 24)),
-              const SizedBox(height: 70),
-
-              // Details the of the owned shoe; Personal to user
-              // How much user spend
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  const Text('You Paid:',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontFamily: "Future",
-                          fontSize: 24)),
-                  Text('\$${purchasePrice}',
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: "Future",
-                          fontSize: 24)),
-                ],
-              ),
-              const SizedBox(height: 50),
-
-              // How many user owns
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  const Text('You Own:',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontFamily: "Future",
-                          fontSize: 24)),
-                  Text(count.toStringAsFixed(0),
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: "Future",
-                          fontSize: 24)),
-                ],
-              ),
-              const SizedBox(height: 50),
-
-              // What size it is
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  const Text('Your Size:',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontFamily: "Future",
-                          fontSize: 24)),
-                  Text(size.toStringAsFixed(0),
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: "Future",
-                          fontSize: 24)),
-                ],
-              ),
-              const SizedBox(height: 50),
-
-              // Buttons to edit details and to add to Favs
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Add to Favs
-                  ElevatedButton(
-                    onPressed: () {
-                      if (widget.sneaker.inFavorites) {
-                        widget.sneaker.setInFavorites(false);
-                      } else {
-                        widget.sneaker.setInFavorites(true);
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                        shape: const CircleBorder(),
-                        padding: const EdgeInsets.all(20)),
-                    child: Icon(Icons.favorite,
-                        color: Theme.of(context).colorScheme.secondary),
-                  ),
-                  const SizedBox(width: 40),
-                  // Edit Details
-                  ElevatedButton(
-                    onPressed: () {
-                      editDialog(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      shape: const CircleBorder(),
-                      padding: const EdgeInsets.all(20),
+      body: SingleChildScrollView(
+        child: Center(
+          child: Container(
+            margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
+            child: Column(
+              children: <Widget>[
+                // Picture of Sneaker + Details
+                Image.asset(
+                    widget.sneaker.imageUrl), //TODO: Load images from URL not assets
+                Text(widget.sneaker.name,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontFamily: "Future",
+                        fontSize: 24)),
+                Text('\$${widget.sneaker.price.toStringAsFixed(0)}',
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.secondary,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: "Future",
+                        fontSize: 24)),
+                const SizedBox(height: 70),
+        
+                // Details the of the owned shoe; Personal to user
+                // How much user spend
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    const Text('You Paid:',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontFamily: "Future",
+                            fontSize: 24)),
+                    Text('\$${purchasePrice}',
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: "Future",
+                            fontSize: 24)),
+                  ],
+                ),
+                const SizedBox(height: 50),
+        
+                // How many user owns
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    const Text('You Own:',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontFamily: "Future",
+                            fontSize: 24)),
+                    Text(count.toStringAsFixed(0),
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: "Future",
+                            fontSize: 24)),
+                  ],
+                ),
+                const SizedBox(height: 50),
+        
+                // What size it is
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    const Text('Your Size:',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontFamily: "Future",
+                            fontSize: 24)),
+                    Text(size.toStringAsFixed(0),
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: "Future",
+                            fontSize: 24)),
+                  ],
+                ),
+                const SizedBox(height: 50),
+        
+                // Buttons to edit details and to add to Favs
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Add to Favs
+                    ElevatedButton(
+                      onPressed: () {
+                        if (widget.sneaker.inFavorites) {
+                          widget.sneaker.setInFavorites(false);
+                        } else {
+                          widget.sneaker.setInFavorites(true);
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                          shape: const CircleBorder(),
+                          padding: const EdgeInsets.all(20)),
+                      child: Icon(Icons.favorite,
+                          color: Theme.of(context).colorScheme.secondary),
                     ),
-                    child: Icon(Icons.edit,
-                        color: Theme.of(context).colorScheme.secondary),
-                  ),
-                ],
-              )
-            ],
+                    const SizedBox(width: 40),
+                    // Edit Details
+                    ElevatedButton(
+                      onPressed: () {
+                        editDialog(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        shape: const CircleBorder(),
+                        padding: const EdgeInsets.all(20),
+                      ),
+                      child: Icon(Icons.edit,
+                          color: Theme.of(context).colorScheme.secondary),
+                    ),
+                  ],
+                )
+              ],
+            ),
           ),
         ),
       ),
@@ -204,22 +207,21 @@ class _DetailScreenState extends State<DetailScreen> {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 200),
-          child: AlertDialog(
-            title: const Align(
-              alignment: Alignment.center,
-              // Heading
-              child: Text(
-                '"Edit Sneaker"',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: "Future",
-                ),
+        return AlertDialog(
+          title: const Align(
+            alignment: Alignment.center,
+            // Heading
+            child: Text(
+              '"Edit Sneaker"',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                fontFamily: "Future",
               ),
             ),
-            content: Container(
+          ),
+          content: SingleChildScrollView(
+            child: Container(
               alignment: Alignment.center,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -264,7 +266,7 @@ class _DetailScreenState extends State<DetailScreen> {
                   const SizedBox(
                     height: 20,
                   ),
-
+            
                   // Edit quantity
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -301,7 +303,7 @@ class _DetailScreenState extends State<DetailScreen> {
                   const SizedBox(
                     height: 20,
                   ),
-
+            
                   // Edit size
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -320,7 +322,7 @@ class _DetailScreenState extends State<DetailScreen> {
                     ],
                   ),
                   const SizedBox(height: 20),
-
+            
                   // Save Changes
                   ElevatedButton(
                     onPressed: () {
