@@ -112,7 +112,7 @@ class _DetailScreenState extends State<DetailScreen> {
                             fontWeight: FontWeight.bold,
                             fontFamily: "Future",
                             fontSize: 24)),
-                    Text('\$${purchasePrice}',
+                    Text('\$$purchasePrice',
                         style: TextStyle(
                             color: Theme.of(context).colorScheme.secondary,
                             fontWeight: FontWeight.bold,
