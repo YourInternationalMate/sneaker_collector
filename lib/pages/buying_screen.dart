@@ -1,26 +1,196 @@
 import 'package:flutter/material.dart';
-import 'package:sneaker_collector/models/sneaker.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:sneaker_collector/models/sneaker.dart';
+import 'package:sneaker_collector/services/api_service.dart';
+import 'package:sneaker_collector/components/shoe_size_dropdown.dart';
 
-class BuyingScreen extends StatelessWidget {
+class BuyingScreen extends StatefulWidget {
   final Sneaker sneaker;
 
   const BuyingScreen({super.key, required this.sneaker});
 
-  _launchStockX() async {
-    final Uri url = Uri.parse(
-        'https://stockx.com'); //TODO: Custom URL to direct User to the shoe
-    if (!await launchUrl(url)) {
-      throw Exception('Could not launch $url');
+  @override
+  _BuyingScreenState createState() => _BuyingScreenState();
+}
+
+class _BuyingScreenState extends State<BuyingScreen> {
+  bool isAddingToCollection = false;
+  bool isAddingToFavorites = false;
+  bool isSizeSelected = false;
+  double? selectedSize;
+  bool showSizeError = false;
+
+  Future<void> _launchURL(String? url, String platform) async {
+    if (url == null) {
+      _showErrorSnackbar('No $platform link available for this sneaker');
+      return;
+    }
+
+    final Uri uri = Uri.parse(url);
+    try {
+      final canLaunch = await canLaunchUrl(uri);
+      if (!canLaunch) {
+        throw Exception('Could not launch URL');
+      }
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (e) {
+      if (mounted) {
+        _showErrorSnackbar('Could not open $platform');
+      }
     }
   }
 
-  _launchGoat() async {
-    final Uri url = Uri.parse(
-        'https://goat.com'); //TODO: Custom URL to direct User to the shoe
-    if (!await launchUrl(url)) {
-      throw Exception('Could not launch $url');
+  void _showErrorSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Theme.of(context).colorScheme.error,
+        duration: const Duration(seconds: 3),
+      ),
+    );
+  }
+
+  void _showSuccessSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.green,
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  Future<void> _toggleCollection() async {
+    if (!isSizeSelected) {
+      setState(() => showSizeError = true);
+      return;
     }
+
+    setState(() => isAddingToCollection = true);
+
+    try {
+      widget.sneaker.setSize(selectedSize!);
+      final success = await ApiService.updateCollection(widget.sneaker);
+
+      if (mounted) {
+        if (success) {
+          setState(() {
+            widget.sneaker.setInCollection(!widget.sneaker.inCollection);
+          });
+          _showSuccessSnackbar(
+            widget.sneaker.inCollection
+                ? 'Added to collection'
+                : 'Removed from collection',
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        _showErrorSnackbar(
+          e is ApiException ? e.message : 'Failed to update collection'
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => isAddingToCollection = false);
+      }
+    }
+  }
+
+  Future<void> _toggleFavorite() async {
+    setState(() => isAddingToFavorites = true);
+
+    try {
+      final success = await ApiService.toggleFavorite(widget.sneaker);
+
+      if (mounted) {
+        if (success) {
+          setState(() {
+            widget.sneaker.setInFavorites(!widget.sneaker.inFavorites);
+          });
+          _showSuccessSnackbar(
+            widget.sneaker.inFavorites
+                ? 'Added to favorites'
+                : 'Removed from favorites',
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        _showErrorSnackbar(
+          e is ApiException ? e.message : 'Failed to update favorites'
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => isAddingToFavorites = false);
+      }
+    }
+  }
+
+  Widget _buildActionButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onPressed,
+    required bool isLoading,
+  }) {
+    return Column(
+      children: [
+        ElevatedButton(
+          onPressed: isLoading ? null : onPressed,
+          style: ElevatedButton.styleFrom(
+            shape: const CircleBorder(),
+            padding: const EdgeInsets.all(20),
+            backgroundColor: Theme.of(context).colorScheme.surface,
+          ),
+          child: isLoading
+              ? const SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : Icon(
+                  icon,
+                  color: Theme.of(context).colorScheme.secondary,
+                  size: 24,
+                ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          label,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.secondary,
+            fontFamily: 'future',
+            fontSize: 12,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBuyButton(String platform, VoidCallback onPressed) {
+    return SizedBox(
+      width: 300,
+      height: 70,
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+        ),
+        child: Text(
+          platform,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.secondary,
+            fontWeight: FontWeight.bold,
+            fontFamily: "Future",
+            fontSize: 24,
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -28,93 +198,145 @@ class BuyingScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
       appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          iconTheme:
-              IconThemeData(color: Theme.of(context).colorScheme.tertiary),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.pop(context);
-            },
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        iconTheme: IconThemeData(
+          color: Theme.of(context).colorScheme.tertiary,
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          "${widget.sneaker.brand} ${widget.sneaker.model}",
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.tertiary,
+            fontWeight: FontWeight.bold,
+            fontFamily: "Future",
+            fontSize: 24,
           ),
-          // Name of Sneaker on top of the Page
-          title: Text(
-            "${sneaker.brand} ${sneaker.model}",
-            style: TextStyle(
-                color: Theme.of(context).colorScheme.tertiary,
-                fontWeight: FontWeight.bold,
-                fontFamily: "Future",
-                fontSize: 24),
-          )),
-      body: Center(
+        ),
+      ),
+      body: SingleChildScrollView(
         child: Container(
           margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
           child: Column(
             children: <Widget>[
-              // Picture of Sneaker + Details
-              Image.asset(
-                  sneaker.imageUrl), //TODO: load image via URL not assets
-              Text(sneaker.name,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontFamily: "Future",
-                      fontSize: 24)),
-              Text('\$${sneaker.price.toStringAsFixed(0)}',
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.secondary,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: "Future",
-                      fontSize: 24)),
-              const SizedBox(height: 200),
-
-              // Links to StockX and Goat to buy the Sneaker
-              SizedBox(
-                width: 300,
-                height: 70,
-                child: ElevatedButton(
-                  onPressed: () {
-                    _launchStockX();
+              // Sneaker Image
+              ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: Image.network(
+                  widget.sneaker.imageUrl,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return SizedBox(
+                      height: 200,
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded /
+                                  loadingProgress.expectedTotalBytes!
+                              : null,
+                        ),
+                      ),
+                    );
                   },
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                  ),
-                  child: Text(
-                    'StockX',
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.secondary,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: "Future",
-                        fontSize: 24),
-                  ),
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      height: 200,
+                      color: Colors.grey[200],
+                      child: const Icon(Icons.error),
+                    );
+                  },
                 ),
               ),
+
+              // Sneaker Details
               const SizedBox(height: 20),
-              SizedBox(
-                width: 300,
-                height: 70,
-                child: ElevatedButton(
-                  onPressed: () {
-                    _launchGoat();
+              Text(
+                widget.sneaker.name,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontFamily: "Future",
+                  fontSize: 24,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              Text(
+                '\$${widget.sneaker.price.toStringAsFixed(0)}',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.secondary,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: "Future",
+                  fontSize: 24,
+                ),
+              ),
+
+              // Size Selector
+              if (!widget.sneaker.inCollection) ...[
+                const SizedBox(height: 20),
+                ShoeSizeDropdown(
+                  onSizeSelected: (String size) {
+                    setState(() {
+                      selectedSize = double.parse(size);
+                      isSizeSelected = true;
+                      showSizeError = false;
+                    });
                   },
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
+                ),
+                if (showSizeError)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      'Please select a size',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.error,
+                        fontSize: 12,
+                      ),
                     ),
                   ),
-                  child: Text(
-                    'GOAT',
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.secondary,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: "Future",
-                        fontSize: 24),
+              ],
+
+              const SizedBox(height: 40),
+
+              // Action Buttons
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildActionButton(
+                    icon: widget.sneaker.inCollection
+                        ? Icons.star
+                        : Icons.star_border,
+                    label: widget.sneaker.inCollection
+                        ? 'In Collection'
+                        : 'Add to Collection',
+                    onPressed: _toggleCollection,
+                    isLoading: isAddingToCollection,
                   ),
-                ),
+                  _buildActionButton(
+                    icon: widget.sneaker.inFavorites
+                        ? Icons.favorite
+                        : Icons.favorite_border,
+                    label: widget.sneaker.inFavorites
+                        ? 'In Favorites'
+                        : 'Add to Favorites',
+                    onPressed: _toggleFavorite,
+                    isLoading: isAddingToFavorites,
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 40),
+
+              // Buy Buttons
+              _buildBuyButton(
+                'StockX',
+                () => _launchURL(widget.sneaker.stockXUrl, 'StockX'),
+              ),
+              const SizedBox(height: 20),
+              _buildBuyButton(
+                'GOAT',
+                () => _launchURL(widget.sneaker.goatUrl, 'GOAT'),
               ),
             ],
           ),

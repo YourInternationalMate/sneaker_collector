@@ -1,48 +1,302 @@
 import 'package:flutter/material.dart';
 import 'package:sneaker_collector/models/user.dart';
+import 'package:sneaker_collector/services/api_service.dart';
+import 'package:sneaker_collector/pages/login_screen.dart';
 
 class Profile extends StatefulWidget {
-  const Profile({Key? key}) : super(key: key);
+  const Profile({super.key});
 
   @override
   _ProfileState createState() => _ProfileState();
 }
 
 class _ProfileState extends State<Profile> {
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  
+  User? user;
+  bool isLoading = true;
+  bool isSaving = false;
+  bool isPasswordVisible = false;
+  String? error;
+  bool hasUnsavedChanges = false;
 
-  final User user = User(
-      // Test User
-      name: "Max Musterman",
-      email: "test.test@test.de",
-      password: "123456",
-      since: "01.01.2021");
+  @override
+  void initState() {
+    super.initState();
+    _loadUserProfile();
+    _setupControllerListeners();
+  }
 
-  void saveData(BuildContext context) {
+  void _setupControllerListeners() {
+    _usernameController.addListener(_checkForChanges);
+    _emailController.addListener(_checkForChanges);
+    _passwordController.addListener(_checkForChanges);
+  }
+
+  void _checkForChanges() {
+    if (!mounted) return;
+    
     setState(() {
-      user.name = _usernameController.text.isNotEmpty
-          ? _usernameController.text
-          : user.name;
-      user.password = _passwordController.text.isNotEmpty
-          ? _passwordController.text
-          : user.password;
+      hasUnsavedChanges = _usernameController.text != user?.name ||
+                         _emailController.text != user?.email ||
+                         _passwordController.text.isNotEmpty;
     });
-    _usernameController.clear();
-    _passwordController.clear(); //TODO: Daten speichern
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      body: SafeArea(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              // Heading
-              const Text(
+  void dispose() {
+    _usernameController.removeListener(_checkForChanges);
+    _emailController.removeListener(_checkForChanges);
+    _passwordController.removeListener(_checkForChanges);
+    _usernameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadUserProfile() async {
+    setState(() {
+      isLoading = true;
+      error = null;
+    });
+
+    try {
+      final userProfile = await ApiService.getUserProfile();
+      if (mounted) {
+        setState(() {
+          user = userProfile;
+          _usernameController.text = userProfile.name;
+          _emailController.text = userProfile.email;
+          isLoading = false;
+        });
+      }
+    } on AuthException {
+      _redirectToLogin();
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          error = e is ApiException ? e.message : 'Failed to load profile';
+          isLoading = false;
+        });
+      }
+    }
+  }
+
+  String? _validateUsername(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter a username';
+    }
+    if (value.length < 3) {
+      return 'Username must be at least 3 characters';
+    }
+    return null;
+  }
+
+  String? _validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter an email';
+    }
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    if (!emailRegex.hasMatch(value)) {
+      return 'Please enter a valid email';
+    }
+    return null;
+  }
+
+  String? _validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return null; // Password is optional for updates
+    }
+    if (value.length < 8) {
+      return 'Password must be at least 8 characters';
+    }
+    if (!RegExp(r'[A-Z]').hasMatch(value)) {
+      return 'Password must contain at least one uppercase letter';
+    }
+    if (!RegExp(r'[a-z]').hasMatch(value)) {
+      return 'Password must contain at least one lowercase letter';
+    }
+    if (!RegExp(r'[0-9]').hasMatch(value)) {
+      return 'Password must contain at least one number';
+    }
+    if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) {
+      return 'Password must contain at least one special character';
+    }
+    return null;
+  }
+
+  Future<void> _saveData() async {
+    if (!_formKey.currentState!.validate()) return;
+    
+    if (!hasUnsavedChanges) {
+      _showSuccessSnackbar('No changes to save');
+      return;
+    }
+
+    setState(() {
+      isSaving = true;
+      error = null;
+    });
+
+    try {
+      final updatedUser = await ApiService.updateProfile(
+        username: _usernameController.text,
+        email: _emailController.text,
+        password: _passwordController.text.isNotEmpty ? _passwordController.text : null,
+      );
+
+      if (mounted) {
+        setState(() {
+          user = updatedUser;
+          _passwordController.clear();
+          hasUnsavedChanges = false;
+          isSaving = false;
+        });
+        _showSuccessSnackbar('Profile updated successfully');
+      }
+    } on AuthException {
+      _redirectToLogin();
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          error = e is ApiException ? e.message : 'Failed to update profile';
+          isSaving = false;
+        });
+        _showErrorSnackbar(error!);
+      }
+    }
+  }
+
+  Future<bool> _onWillPop() async {
+    if (!hasUnsavedChanges) return true;
+
+    return await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Discard changes?'),
+        content: const Text('You have unsaved changes. Do you want to discard them?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('CANCEL'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text(
+              'DISCARD',
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
+      ),
+    ) ?? false;
+  }
+
+  Future<void> _logout() async {
+    if (hasUnsavedChanges) {
+      final shouldProceed = await _onWillPop();
+      if (!shouldProceed) return;
+    }
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Logout'),
+          content: const Text('Are you sure you want to logout?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('CANCEL'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text(
+                'LOGOUT',
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed == true) {
+      try {
+        await ApiService.logout();
+        _redirectToLogin();
+      } catch (e) {
+        // Even if logout fails, redirect to login
+        _redirectToLogin();
+      }
+    }
+  }
+
+  void _redirectToLogin() {
+    if (mounted) {
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+        (Route<dynamic> route) => false,
+      );
+    }
+  }
+
+  void _showErrorSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Theme.of(context).colorScheme.error,
+        duration: const Duration(seconds: 3),
+      ),
+    );
+  }
+
+  void _showSuccessSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.green,
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  Widget _buildErrorView() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            error ?? 'An error occurred',
+            style: const TextStyle(fontSize: 18, color: Colors.red),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: _loadUserProfile,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.secondary,
+            ),
+            child: const Text('Retry'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProfileContent() {
+    return SingleChildScrollView(
+      child: Form(
+        key: _formKey,
+        onWillPop: _onWillPop,
+        child: Column(
+          children: [
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 20),
+              child: Text(
                 '"Profile"',
                 style: TextStyle(
                   fontSize: 40,
@@ -50,166 +304,165 @@ class _ProfileState extends State<Profile> {
                   fontFamily: 'future',
                 ),
               ),
-              const SizedBox(height: 10),
-              Column(
-                children: <Widget>[
-                  const SizedBox(height: 30),
-                  // Profile Picture
-                  Container(
-                    width: 100,
-                    height: 100,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        image: AssetImage(
-                            "assets/images/logo/SneakerCollectorLogo.png"), // TODO: Bild in DB
-                        fit: BoxFit.cover,
+            ),
+
+            // Profile Picture and Basic Info
+            Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+              ),
+              child: Icon(
+                Icons.person,
+                size: 60,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              user?.name ?? '',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+            ),
+            Text(
+              'Member since ${user?.since ?? ''}',
+              style: const TextStyle(fontSize: 15),
+            ),
+
+            // Edit Profile Form
+            Padding(
+              padding: const EdgeInsets.all(25),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary,
+                  borderRadius: BorderRadius.circular(50),
+                ),
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextFormField(
+                      controller: _usernameController,
+                      decoration: InputDecoration(
+                        labelText: 'USERNAME',
+                        prefixIcon: const Icon(Icons.person),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
+                      validator: _validateUsername,
+                      enabled: !isSaving,
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  // Username + Date since Acc Creation
-                  Text(user.name,
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.secondary)),
-                  Text(user.since, style: const TextStyle(fontSize: 15)),
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(left: 25, right: 25, top: 20),
-
-                    // field to change username + password
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height - 500,
-                      alignment: Alignment.topCenter,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primary,
-                        borderRadius: BorderRadius.circular(50),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      controller: _emailController,
+                      decoration: InputDecoration(
+                        labelText: 'EMAIL',
+                        prefixIcon: const Icon(Icons.email),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
+                      validator: _validateEmail,
+                      enabled: !isSaving,
+                    ),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      controller: _passwordController,
+                      decoration: InputDecoration(
+                        labelText: 'NEW PASSWORD',
+                        prefixIcon: const Icon(Icons.lock),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            isPasswordVisible ? Icons.visibility_off : Icons.visibility,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              isPasswordVisible = !isPasswordVisible;
+                            });
+                          },
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      obscureText: !isPasswordVisible,
+                      validator: _validatePassword,
+                      enabled: !isSaving,
+                    ),
+                    const SizedBox(height: 30),
+
+                    Center(
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          // edit Username
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 50, bottom: 5),
-                              child: Text("USERNAME",
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondary)),
-                            ),
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 50.0),
-                            child: TextField(
-                              controller: _usernameController,
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
-                                  ),
-                                ),
-                                suffixIcon: const Icon(Icons.person),
-                                hintText: user.name,
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-
-                          // edit Password
-                          const SizedBox(height: 20),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 50, bottom: 5),
-                              child: Text("PASSWORD",
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondary)),
-                            ),
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 50.0),
-                            child: TextField(
-                              controller: _passwordController,
-                              obscureText: true,
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
-                                  ),
-                                ),
-                                suffixIcon: const Icon(Icons.lock),
-                                hintText: "•" * user.password.length,
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-
-                          // Save Button, to save entries
-                          const SizedBox(height: 30),
+                        children: [
                           SizedBox(
                             width: 250,
                             child: ElevatedButton(
-                              onPressed: () {
-                                saveData(context);
-                              },
+                              onPressed: isSaving ? null : _saveData,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    Theme.of(context).colorScheme.secondary,
-                                foregroundColor:
-                                    Theme.of(context).colorScheme.tertiary,
+                                backgroundColor: Theme.of(context).colorScheme.secondary,
+                                foregroundColor: Theme.of(context).colorScheme.primary,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                               ),
-                              child: const Text(
-                                'SAVE',
-                                style: TextStyle(
-                                    fontFamily: 'future',
-                                    fontWeight: FontWeight.bold),
+                              child: isSaving
+                                  ? const SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                  : const Text(
+                                      'SAVE',
+                                      style: TextStyle(
+                                        fontFamily: 'future',
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          TextButton(
+                            onPressed: isSaving ? null : _logout,
+                            child: Text(
+                              'Logout',
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.error,
+                                fontFamily: 'future',
                               ),
                             ),
                           ),
-                          const SizedBox(
-                            height: 20,
-                          )
                         ],
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      body: SafeArea(
+        child: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : error != null
+                ? _buildErrorView()
+                : _buildProfileContent(),
       ),
     );
   }

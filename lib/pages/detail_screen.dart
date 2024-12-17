@@ -1,11 +1,14 @@
+// lib/pages/detail_screen.dart
+
 import 'package:flutter/material.dart';
 import 'package:sneaker_collector/models/sneaker.dart';
 import 'package:sneaker_collector/components/shoe_size_dropdown.dart';
+import 'package:sneaker_collector/services/api_service.dart';
 
 class DetailScreen extends StatefulWidget {
   final Sneaker sneaker;
 
-  const DetailScreen ({ Key? key, required this.sneaker }): super(key: key);
+  const DetailScreen({Key? key, required this.sneaker}) : super(key: key);
 
   @override
   _DetailScreenState createState() => _DetailScreenState();
@@ -14,187 +17,351 @@ class DetailScreen extends StatefulWidget {
 class _DetailScreenState extends State<DetailScreen> {
   late TextEditingController _purchasePriceController;
   late TextEditingController _amountController;
-  late double purchasePrice;
-  late int count;
-  late double size;
+  bool isSaving = false;
+  String? error;
   String _selectedSize = '';
-  
+  bool hasUnsavedChanges = false;
 
   @override
   void initState() {
     super.initState();
-    _purchasePriceController = TextEditingController();
-    _amountController = TextEditingController();
-    purchasePrice = widget.sneaker.purchasePrice;
-    count = widget.sneaker.count;
-    size = widget.sneaker.size;
+    _purchasePriceController = TextEditingController(
+      text: widget.sneaker.purchasePrice.toString()
+    );
+    _amountController = TextEditingController(
+      text: widget.sneaker.count.toString()
+    );
+    _selectedSize = widget.sneaker.size.toString();
+
+    // Überwache Änderungen
+    _purchasePriceController.addListener(_onFieldChanged);
+    _amountController.addListener(_onFieldChanged);
   }
 
   @override
   void dispose() {
+    _purchasePriceController.removeListener(_onFieldChanged);
+    _amountController.removeListener(_onFieldChanged);
     _purchasePriceController.dispose();
     _amountController.dispose();
     super.dispose();
   }
 
-  void saveChanges() {
-    if (_purchasePriceController.text.isNotEmpty) {
-      widget.sneaker.setPurchasePrice(double.parse(_purchasePriceController.text));
-    }
-    if (_amountController.text.isNotEmpty) {
-      widget.sneaker.setCount(int.parse(_amountController.text));
-    }
-    if (_selectedSize.isNotEmpty) {
-      widget.sneaker.setSize(double.parse(_selectedSize));
-    }
+  void _onFieldChanged() {
+    final newPurchasePrice = double.tryParse(_purchasePriceController.text) ?? 0.0;
+    final newAmount = int.tryParse(_amountController.text) ?? 0;
+    
     setState(() {
-      purchasePrice = widget.sneaker.purchasePrice;
-      count = widget.sneaker.count;
-      size = widget.sneaker.size;
+      hasUnsavedChanges = newPurchasePrice != widget.sneaker.purchasePrice ||
+                         newAmount != widget.sneaker.count ||
+                         (_selectedSize != widget.sneaker.size.toString() &&
+                          _selectedSize.isNotEmpty);
+    });
+  }
+
+  Future<bool> _onWillPop() async {
+    if (!hasUnsavedChanges) return true;
+
+    return await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Discard changes?'),
+        content: const Text('You have unsaved changes. Do you want to discard them?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('CANCEL'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text(
+              'DISCARD',
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
+      ),
+    ) ?? false;
+  }
+
+  Future<void> _toggleFavorite() async {
+    setState(() => isSaving = true);
+
+    try {
+      final success = await ApiService.toggleFavorite(widget.sneaker);
+      if (mounted) {
+        setState(() {
+          widget.sneaker.setInFavorites(!widget.sneaker.inFavorites);
+        });
+        _showSuccessSnackbar(
+          widget.sneaker.inFavorites
+              ? 'Added to favorites'
+              : 'Removed from favorites'
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        _showErrorSnackbar(e);
+      }
+    } finally {
+      if (mounted) {
+        setState(() => isSaving = false);
+      }
+    }
+  }
+
+  void _showErrorSnackbar(dynamic error) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(error is ApiException ? error.message : 'An error occurred'),
+        backgroundColor: Theme.of(context).colorScheme.error,
+        duration: const Duration(seconds: 3),
+      ),
+    );
+  }
+
+  void _showSuccessSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.green,
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  bool _validateInputs() {
+    if (_amountController.text.isEmpty ||
+        int.tryParse(_amountController.text) == null ||
+        int.parse(_amountController.text) <= 0) {
+      _showErrorSnackbar('Please enter a valid amount');
+      return false;
+    }
+
+    if (_purchasePriceController.text.isNotEmpty) {
+      final price = double.tryParse(_purchasePriceController.text);
+      if (price == null || price < 0) {
+        _showErrorSnackbar('Please enter a valid purchase price');
+        return false;
+      }
+    }
+
+    if (_selectedSize.isEmpty) {
+      _showErrorSnackbar('Please select a size');
+      return false;
+    }
+
+    return true;
+  }
+
+  Future<void> saveChanges() async {
+    if (!_validateInputs()) return;
+
+    setState(() {
+      isSaving = true;
+      error = null;
     });
 
-    //TODO: Datenbank update
+    try {
+      widget.sneaker
+        ..setPurchasePrice(double.parse(_purchasePriceController.text))
+        ..setCount(int.parse(_amountController.text))
+        ..setSize(double.parse(_selectedSize));
+
+      await ApiService.updateCollection(widget.sneaker);
+      
+      if (mounted) {
+        setState(() {
+          hasUnsavedChanges = false;
+        });
+        _showSuccessSnackbar('Changes saved successfully');
+        Navigator.pop(context, true);
+      }
+    } catch (e) {
+      if (mounted) {
+        _showErrorSnackbar(e);
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          isSaving = false;
+        });
+      }
+    }
+  }
+
+  Widget _buildDetailRow(String label, String value) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Text(
+          label,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontFamily: "Future",
+            fontSize: 24,
+          ),
+        ),
+        Text(
+          value,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.secondary,
+            fontWeight: FontWeight.bold,
+            fontFamily: "Future",
+            fontSize: 24,
+          ),
+        ),
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primary,
-      appBar: AppBar(
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          iconTheme:
-              IconThemeData(color: Theme.of(context).colorScheme.tertiary),
+          iconTheme: IconThemeData(
+            color: Theme.of(context).colorScheme.tertiary,
+          ),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.pop(context);
+            onPressed: () async {
+              if (await _onWillPop()) {
+                Navigator.pop(context);
+              }
             },
           ),
-          // Sneaker name on top of Page as Heading
           title: Text(
             "${widget.sneaker.brand} ${widget.sneaker.model}",
             style: TextStyle(
-                color: Theme.of(context).colorScheme.tertiary,
-                fontWeight: FontWeight.bold,
-                fontFamily: "Future",
-                fontSize: 24),
-          )),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Container(
-            margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
-            child: Column(
-              children: <Widget>[
-                // Picture of Sneaker + Details
-                Image.asset(
-                    widget.sneaker.imageUrl), //TODO: Load images from URL not assets
-                Text(widget.sneaker.name,
+              color: Theme.of(context).colorScheme.tertiary,
+              fontWeight: FontWeight.bold,
+              fontFamily: "Future",
+              fontSize: 24,
+            ),
+          ),
+          actions: [
+            if (hasUnsavedChanges)
+              Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: IconButton(
+                  icon: const Icon(Icons.save),
+                  onPressed: isSaving ? null : saveChanges,
+                ),
+              ),
+          ],
+        ),
+        body: SingleChildScrollView(
+          child: Center(
+            child: Container(
+              margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
+              child: Column(
+                children: <Widget>[
+                  // Sneaker Image
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: Image.network(
+                      widget.sneaker.imageUrl,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return SizedBox(
+                          height: 200,
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                      loadingProgress.expectedTotalBytes!
+                                  : null,
+                            ),
+                          ),
+                        );
+                      },
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          height: 200,
+                          color: Colors.grey[200],
+                          child: const Icon(Icons.error),
+                        );
+                      },
+                    ),
+                  ),
+
+                  // Sneaker Name and Price
+                  const SizedBox(height: 20),
+                  Text(
+                    widget.sneaker.name,
                     style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontFamily: "Future",
-                        fontSize: 24)),
-                Text('\$${widget.sneaker.price.toStringAsFixed(0)}',
+                      fontWeight: FontWeight.bold,
+                      fontFamily: "Future",
+                      fontSize: 24,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  Text(
+                    '\$${widget.sneaker.price.toStringAsFixed(0)}',
                     style: TextStyle(
-                        color: Theme.of(context).colorScheme.secondary,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: "Future",
-                        fontSize: 24)),
-                const SizedBox(height: 70),
-        
-                // Details the of the owned shoe; Personal to user
-                // How much user spend
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    const Text('You Paid:',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontFamily: "Future",
-                            fontSize: 24)),
-                    Text('\$$purchasePrice',
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.secondary,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: "Future",
-                            fontSize: 24)),
-                  ],
-                ),
-                const SizedBox(height: 50),
-        
-                // How many user owns
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    const Text('You Own:',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontFamily: "Future",
-                            fontSize: 24)),
-                    Text(count.toStringAsFixed(0),
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.secondary,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: "Future",
-                            fontSize: 24)),
-                  ],
-                ),
-                const SizedBox(height: 50),
-        
-                // What size it is
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    const Text('Your Size:',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontFamily: "Future",
-                            fontSize: 24)),
-                    Text(size.toStringAsFixed(0),
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.secondary,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: "Future",
-                            fontSize: 24)),
-                  ],
-                ),
-                const SizedBox(height: 50),
-        
-                // Buttons to edit details and to add to Favs
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Add to Favs
-                    ElevatedButton(
-                      onPressed: () {
-                        if (widget.sneaker.inFavorites) {
-                          widget.sneaker.setInFavorites(false);
-                        } else {
-                          widget.sneaker.setInFavorites(true);
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
+                      color: Theme.of(context).colorScheme.secondary,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: "Future",
+                      fontSize: 24,
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+
+                  // Current Details
+                  _buildDetailRow(
+                    'Purchase Price:',
+                    '\$${_purchasePriceController.text}',
+                  ),
+                  const SizedBox(height: 20),
+                  _buildDetailRow(
+                    'Amount:',
+                    _amountController.text,
+                  ),
+                  const SizedBox(height: 20),
+                  _buildDetailRow(
+                    'Size:',
+                    _selectedSize,
+                  ),
+                  const SizedBox(height: 40),
+
+                  // Action Buttons
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        onPressed: isSaving ? null : _toggleFavorite,
+                        style: ElevatedButton.styleFrom(
                           shape: const CircleBorder(),
-                          padding: const EdgeInsets.all(20)),
-                      child: Icon(Icons.favorite,
-                          color: Theme.of(context).colorScheme.secondary),
-                    ),
-                    const SizedBox(width: 40),
-                    // Edit Details
-                    ElevatedButton(
-                      onPressed: () {
-                        editDialog(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        shape: const CircleBorder(),
-                        padding: const EdgeInsets.all(20),
+                          padding: const EdgeInsets.all(20),
+                        ),
+                        child: Icon(
+                          widget.sneaker.inFavorites
+                              ? Icons.favorite
+                              : Icons.favorite_border,
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
                       ),
-                      child: Icon(Icons.edit,
-                          color: Theme.of(context).colorScheme.secondary),
-                    ),
-                  ],
-                )
-              ],
+                      const SizedBox(width: 40),
+                      ElevatedButton(
+                        onPressed: isSaving ? null : () => _showEditDialog(context),
+                        style: ElevatedButton.styleFrom(
+                          shape: const CircleBorder(),
+                          padding: const EdgeInsets.all(20),
+                        ),
+                        child: Icon(
+                          Icons.edit,
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -202,15 +369,13 @@ class _DetailScreenState extends State<DetailScreen> {
     );
   }
 
-  // Menu to edit sneaker details
-  Future<dynamic> editDialog(BuildContext context) {
-    return showDialog(
+  Future<void> _showEditDialog(BuildContext context) async {
+    await showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Align(
             alignment: Alignment.center,
-            // Heading
             child: Text(
               '"Edit Sneaker"',
               style: TextStyle(
@@ -226,106 +391,94 @@ class _DetailScreenState extends State<DetailScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  // Edit paid amount
+                  const SizedBox(height: 20),
+                  
+                  // Purchase Price
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
-                      Text("You Paid: ",
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.secondary)),
+                      Text(
+                        "Purchase Price: ",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                      ),
                       SizedBox(
                         width: 100,
                         height: 50,
                         child: TextField(
                           controller: _purchasePriceController,
+                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(
-                                color: Theme.of(context).colorScheme.secondary,
-                              ),
                             ),
-                            focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: BorderSide(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .secondary)),
                             suffixIcon: const Icon(Icons.attach_money),
-                            hintText: widget.sneaker.purchasePrice.toStringAsFixed(0),
                           ),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-            
-                  // Edit quantity
+                  const SizedBox(height: 20),
+
+                  // Amount
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
-                      Text("You Own: ",
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.secondary)),
+                      Text(
+                        "Amount: ",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                      ),
                       SizedBox(
                         width: 100,
                         height: 50,
                         child: TextField(
                           controller: _amountController,
+                          keyboardType: TextInputType.number,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(
-                                color: Theme.of(context).colorScheme.secondary,
-                              ),
                             ),
-                            focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: BorderSide(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .secondary)),
-                            hintText: widget.sneaker.count.toStringAsFixed(0),
                           ),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-            
-                  // Edit size
+                  const SizedBox(height: 20),
+
+                  // Size
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
-                      Text("Your Size: ",
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.secondary)),
+                      Text(
+                        "Size: ",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                      ),
                       ShoeSizeDropdown(
-                          onSizeSelected: (String size) {
-                            setState(() {
-                              _selectedSize = size;
-                            });
-                          }),
+                        onSizeSelected: (String size) {
+                          setState(() {
+                            _selectedSize = size;
+                            hasUnsavedChanges = true;
+                          });
+                        },
+                      ),
                     ],
                   ),
                   const SizedBox(height: 20),
-            
-                  // Save Changes
+
+                  // Save Button
                   ElevatedButton(
-                    onPressed: () {
+                    onPressed: isSaving ? null : () {
                       saveChanges();
                       Navigator.pop(context);
                     },
@@ -335,15 +488,28 @@ class _DetailScreenState extends State<DetailScreen> {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 50, vertical: 10),
+                        horizontal: 50,
+                        vertical: 10,
+                      ),
                     ),
-                    child: Text("SAVE",
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: "Future",
-                        )),
+                    child: isSaving
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : Text(
+                            "SAVE",
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: "Future",
+                            ),
+                          ),
                   ),
                 ],
               ),
