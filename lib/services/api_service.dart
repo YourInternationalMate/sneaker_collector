@@ -54,27 +54,57 @@ class RateLimitException extends ApiException {
 }
 
 class ApiService {
-  static const String baseUrl = 'http://10.0.2.2:5000/api/v1'; // For Android emulator
+  static const String baseUrl = 'http://127.0.0.1:5001/api/v1'; // For Android emulator
   static String? _token;
 
   static Future<String?> get token async {
-    if (_token != null) return _token;
+    if (_token != null) {
+      return _token;
+    }
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('token');
+    final storedToken = prefs.getString('token');
+    if (storedToken != null) {
+      // Validate stored token
+      try {
+        final parts = storedToken.split('.');
+        if (parts.length != 3) {
+          // Invalid token, clear it
+          await prefs.remove('token');
+          return null;
+        }
+      } catch (e) {
+        await prefs.remove('token');
+        return null;
+      }
+    }
+    _token = storedToken;
+    return storedToken;
   }
 
   static Future<void> setToken(String token) async {
-    _token = token;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('token', token);
+    try {
+      // Basic validation that the token is a proper JWT
+      final parts = token.split('.');
+      if (parts.length != 3) {
+        throw ApiException('Invalid token format');
+      }
+      
+      _token = token;
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('token', token);
+    } catch (e) {
+      throw ApiException('Failed to save token: $e');
+    }
   }
 
   static Future<Map<String, String>> get headers async {
-    final token = await ApiService.token;
-    return {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ${token ?? ''}',
-    };
+      final token = await ApiService.token;
+      if (token == null) throw AuthException();
+      
+      return {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',  // Make sure there's a space after 'Bearer'
+      };
   }
 
   static Future<T> _handleResponse<T>(
@@ -83,6 +113,8 @@ class ApiService {
   ) async {
     try {
       final response = await request();
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
       
       if (response.statusCode == 401) {
         throw AuthException();
@@ -98,18 +130,15 @@ class ApiService {
       }
 
       final error = json.decode(response.body);
+      print('Error response: $error');
       throw ApiException(
         error['message'] ?? error['error'] ?? 'An error occurred',
         statusCode: response.statusCode,
         errorId: error['error_id'],
       );
-    } on SocketException {
-      throw NetworkException();
-    } on TimeoutException {
-      throw ApiException('Request timed out');
     } catch (e) {
-      if (e is ApiException) rethrow;
-      throw ApiException('An unexpected error occurred: $e');
+      print('Exception in _handleResponse: $e');
+      rethrow;
     }
   }
 

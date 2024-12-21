@@ -120,11 +120,13 @@ class _SearchScreenState extends State<Search> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          sneakers = [];
-          error = e is ApiException ? e.message : 'Search failed';
           isLoading = false;
+          // Spezifischere Fehlermeldung
+          error = e is ApiException 
+              ? e.message 
+              : 'Ein Fehler ist aufgetreten. Bitte versuche es erneut.';
         });
-        _showErrorSnackbar(e);
+        _showErrorSnackbar(error ?? 'Unbekannter Fehler');
       }
     }
   }
@@ -192,6 +194,12 @@ class _SearchScreenState extends State<Search> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Icon(
+              Icons.error_outline,
+              size: 48,
+              color: Theme.of(context).colorScheme.error,
+            ),
+            const SizedBox(height: 16),
             Text(
               error!,
               style: const TextStyle(color: Colors.red),
@@ -199,8 +207,11 @@ class _SearchScreenState extends State<Search> {
             ),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: () => _performSearch(lastQuery),
-              child: const Text('Retry'),
+              onPressed: () => _performSearch(searchController.text),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.secondary,
+              ),
+              child: const Text('Erneut versuchen'),
             ),
           ],
         ),
@@ -209,11 +220,22 @@ class _SearchScreenState extends State<Search> {
 
     if (sneakers.isEmpty) {
       return Center(
-        child: Text(
-          searchController.text.isEmpty
-              ? "Search for sneakers"
-              : "No sneakers found.",
-          style: const TextStyle(fontSize: 18),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              searchController.text.isEmpty ? Icons.search : Icons.info_outline,
+              size: 48,
+              color: Theme.of(context).colorScheme.secondary.withOpacity(0.5),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              searchController.text.isEmpty
+                  ? 'Nach Sneakern suchen'
+                  : 'Keine Sneaker gefunden.',
+              style: const TextStyle(fontSize: 18),
+            ),
+          ],
         ),
       );
     }
@@ -241,6 +263,7 @@ class _SearchScreenState extends State<Search> {
       },
     );
   }
+
 
   @override
   Widget build(BuildContext context) {

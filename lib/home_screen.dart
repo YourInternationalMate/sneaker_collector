@@ -27,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _initializeApp() async {
     setState(() => _isLoading = true);
-    
+
     try {
       // Check for valid auth token
       final token = await ApiService.token;
@@ -36,7 +36,6 @@ class _HomeScreenState extends State<HomeScreen> {
         return;
       }
 
-      // Verify token is still valid by making a test API call
       await ApiService.getUserProfile();
 
       if (mounted) {
@@ -55,10 +54,8 @@ class _HomeScreenState extends State<HomeScreen> {
       _redirectToLogin();
     } catch (e) {
       if (mounted) {
-        _showErrorDialog(
-          'Failed to initialize app',
-          'Please check your internet connection and try again.'
-        );
+        _showErrorDialog('Failed to initialize app',
+            'Please check your internet connection and try again.');
       }
     }
   }
@@ -128,65 +125,62 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     return Scaffold(
-      body: _pages[_currentIndex],
-      extendBody: true,
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.secondary,
-              borderRadius: BorderRadius.circular(15),
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 10,
-                  spreadRadius: 1,
-                  offset: Offset(0, 5),
-                ),
-              ],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(15),
-              child: SizedBox(
-                height: 65,
-                child: BottomNavigationBar(
-                  onTap: _onTabTapped,
-                  currentIndex: _currentIndex,
-                  selectedItemColor: Colors.white,
-                  unselectedItemColor: Colors.white70,
-                  backgroundColor: Theme.of(context).colorScheme.secondary,
-                  showSelectedLabels: false,
-                  showUnselectedLabels: false,
-                  type: BottomNavigationBarType.fixed,
-                  items: const [
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.search, size: 30),
-                      activeIcon: Icon(Icons.search, size: 35),
-                      label: 'Search',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.star, size: 30),
-                      activeIcon: Icon(Icons.star, size: 35),
-                      label: 'Collection',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.favorite, size: 30),
-                      activeIcon: Icon(Icons.favorite, size: 35),
-                      label: 'Favorites',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.person, size: 30),
-                      activeIcon: Icon(Icons.person, size: 35),
-                      label: 'Profile',
-                    ),
-                  ],
-                ),
+        body: _pages[_currentIndex],
+        extendBody: true,
+        bottomNavigationBar: Container(
+          padding: EdgeInsets.only(
+            left: 20,
+            right: 20,
+            bottom: MediaQuery.of(context).padding.bottom + 10,
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(15),
+            child: Container(
+              height: 60, // Fixe Höhe
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.secondary,
+                borderRadius: BorderRadius.circular(15),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 10,
+                    spreadRadius: 1,
+                    offset: Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: BottomNavigationBar(
+                elevation: 0,
+                onTap: _onTabTapped,
+                currentIndex: _currentIndex,
+                selectedItemColor: Colors.white,
+                unselectedItemColor: Colors.white70,
+                backgroundColor: Colors.transparent,
+                showSelectedLabels: false,
+                showUnselectedLabels: false,
+                type: BottomNavigationBarType.fixed,
+                iconSize: 26, // Kleinere Icons
+                items: const [
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.search),
+                    label: 'Search',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.star),
+                    label: 'Collection',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.favorite),
+                    label: 'Favorites',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.person),
+                    label: 'Profile',
+                  ),
+                ],
               ),
             ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 }

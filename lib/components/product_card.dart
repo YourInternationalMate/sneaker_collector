@@ -14,22 +14,50 @@ class ProductCard extends StatelessWidget {
         onTapFunction();
       },
       child: SizedBox(
-        height: 160,
+      height: 160,
+      child: Card(
+        color: Theme.of(context).colorScheme.primary,
+        margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+        child: Column(
+          children: <Widget>[
+            ListTile(
+              leading: Container(
+                width: 140,
+                height: 100,
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: Image.network(
+                    sneaker.imageUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Center(
+                        child: Icon(
+                          Icons.broken_image,
+                          color: Colors.grey[400],
+                          size: 40,
+                        ),
+                      );
+                    },
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Center(
+                        child: CircularProgressIndicator(
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded / 
+                                loadingProgress.expectedTotalBytes!
+                              : null,
+                          strokeWidth: 2,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
 
-        // Product card for sneaker
-        child: Card(
-          color: Theme.of(context).colorScheme.primary,
-          margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-          child: Column(
-            children: <Widget>[
-              ListTile(
-                // image of sneaker
-                leading: SizedBox(
-                    width: 140,
-                    height: 100,
-                    child: Image.asset(sneaker
-                        .imageUrl) //TODO: Load pictues via network, not assets
-                    ),
                 // Name of the Sneaker
                 title: Align(
                   alignment: Alignment.topLeft,
