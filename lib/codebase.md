@@ -17,22 +17,50 @@ class ProductCard extends StatelessWidget {
         onTapFunction();
       },
       child: SizedBox(
-        height: 160,
+      height: 160,
+      child: Card(
+        color: Theme.of(context).colorScheme.primary,
+        margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+        child: Column(
+          children: <Widget>[
+            ListTile(
+              leading: Container(
+                width: 140,
+                height: 100,
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: Image.network(
+                    sneaker.imageUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Center(
+                        child: Icon(
+                          Icons.broken_image,
+                          color: Colors.grey[400],
+                          size: 40,
+                        ),
+                      );
+                    },
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Center(
+                        child: CircularProgressIndicator(
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded / 
+                                loadingProgress.expectedTotalBytes!
+                              : null,
+                          strokeWidth: 2,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
 
-        // Product card for sneaker
-        child: Card(
-          color: Theme.of(context).colorScheme.primary,
-          margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-          child: Column(
-            children: <Widget>[
-              ListTile(
-                // image of sneaker
-                leading: SizedBox(
-                    width: 140,
-                    height: 100,
-                    child: Image.asset(sneaker
-                        .imageUrl) //TODO: Load pictues via network, not assets
-                    ),
                 // Name of the Sneaker
                 title: Align(
                   alignment: Alignment.topLeft,
@@ -118,7 +146,6 @@ class ProductCard extends StatelessWidget {
     );
   }
 }
-
 ```
 
 # components/shoe_size_dropdown.dart
@@ -192,7 +219,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _initializeApp() async {
     setState(() => _isLoading = true);
-    
+
     try {
       // Check for valid auth token
       final token = await ApiService.token;
@@ -219,10 +246,8 @@ class _HomeScreenState extends State<HomeScreen> {
       _redirectToLogin();
     } catch (e) {
       if (mounted) {
-        _showErrorDialog(
-          'Failed to initialize app',
-          'Please check your internet connection and try again.'
-        );
+        _showErrorDialog('Failed to initialize app',
+            'Please check your internet connection and try again.');
       }
     }
   }
@@ -292,68 +317,66 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     return Scaffold(
-      body: _pages[_currentIndex],
-      extendBody: true,
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.secondary,
-              borderRadius: BorderRadius.circular(15),
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 10,
-                  spreadRadius: 1,
-                  offset: Offset(0, 5),
-                ),
-              ],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(15),
-              child: SizedBox(
-                height: 65,
-                child: BottomNavigationBar(
-                  onTap: _onTabTapped,
-                  currentIndex: _currentIndex,
-                  selectedItemColor: Colors.white,
-                  unselectedItemColor: Colors.white70,
-                  backgroundColor: Theme.of(context).colorScheme.secondary,
-                  showSelectedLabels: false,
-                  showUnselectedLabels: false,
-                  type: BottomNavigationBarType.fixed,
-                  items: const [
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.search, size: 30),
-                      activeIcon: Icon(Icons.search, size: 35),
-                      label: 'Search',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.star, size: 30),
-                      activeIcon: Icon(Icons.star, size: 35),
-                      label: 'Collection',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.favorite, size: 30),
-                      activeIcon: Icon(Icons.favorite, size: 35),
-                      label: 'Favorites',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.person, size: 30),
-                      activeIcon: Icon(Icons.person, size: 35),
-                      label: 'Profile',
-                    ),
-                  ],
-                ),
+        body: _pages[_currentIndex],
+        extendBody: true,
+        bottomNavigationBar: Container(
+          padding: EdgeInsets.only(
+            left: 20,
+            right: 20,
+            bottom: MediaQuery.of(context).padding.bottom + 10,
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(15),
+            child: Container(
+              height: 60, // Fixe Höhe
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.secondary,
+                borderRadius: BorderRadius.circular(15),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 10,
+                    spreadRadius: 1,
+                    offset: Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: BottomNavigationBar(
+                elevation: 0,
+                onTap: _onTabTapped,
+                currentIndex: _currentIndex,
+                selectedItemColor: Colors.white,
+                unselectedItemColor: Colors.white70,
+                backgroundColor: Colors.transparent,
+                showSelectedLabels: false,
+                showUnselectedLabels: false,
+                type: BottomNavigationBarType.fixed,
+                iconSize: 26, // Kleinere Icons
+                items: const [
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.search),
+                    label: 'Search',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.star),
+                    label: 'Collection',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.favorite),
+                    label: 'Favorites',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.person),
+                    label: 'Profile',
+                  ),
+                ],
               ),
             ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 }
+
 ```
 
 # main.dart
@@ -3264,11 +3287,13 @@ class _SearchScreenState extends State<Search> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          sneakers = [];
-          error = e is ApiException ? e.message : 'Search failed';
           isLoading = false;
+          // Spezifischere Fehlermeldung
+          error = e is ApiException 
+              ? e.message 
+              : 'Ein Fehler ist aufgetreten. Bitte versuche es erneut.';
         });
-        _showErrorSnackbar(e);
+        _showErrorSnackbar(error ?? 'Unbekannter Fehler');
       }
     }
   }
@@ -3336,6 +3361,12 @@ class _SearchScreenState extends State<Search> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Icon(
+              Icons.error_outline,
+              size: 48,
+              color: Theme.of(context).colorScheme.error,
+            ),
+            const SizedBox(height: 16),
             Text(
               error!,
               style: const TextStyle(color: Colors.red),
@@ -3343,8 +3374,11 @@ class _SearchScreenState extends State<Search> {
             ),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: () => _performSearch(lastQuery),
-              child: const Text('Retry'),
+              onPressed: () => _performSearch(searchController.text),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.secondary,
+              ),
+              child: const Text('Erneut versuchen'),
             ),
           ],
         ),
@@ -3353,11 +3387,22 @@ class _SearchScreenState extends State<Search> {
 
     if (sneakers.isEmpty) {
       return Center(
-        child: Text(
-          searchController.text.isEmpty
-              ? "Search for sneakers"
-              : "No sneakers found.",
-          style: const TextStyle(fontSize: 18),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              searchController.text.isEmpty ? Icons.search : Icons.info_outline,
+              size: 48,
+              color: Theme.of(context).colorScheme.secondary.withOpacity(0.5),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              searchController.text.isEmpty
+                  ? 'Nach Sneakern suchen'
+                  : 'Keine Sneaker gefunden.',
+              style: const TextStyle(fontSize: 18),
+            ),
+          ],
         ),
       );
     }
@@ -3385,6 +3430,7 @@ class _SearchScreenState extends State<Search> {
       },
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -3481,21 +3527,42 @@ class ApiService {
 
   static Future<String?> get token async {
     if (_token != null) {
-      print('Using cached token: $_token');
       return _token;
     }
     final prefs = await SharedPreferences.getInstance();
     final storedToken = prefs.getString('token');
-    print('Retrieved token from SharedPreferences: $storedToken');
+    if (storedToken != null) {
+      // Validate stored token
+      try {
+        final parts = storedToken.split('.');
+        if (parts.length != 3) {
+          // Invalid token, clear it
+          await prefs.remove('token');
+          return null;
+        }
+      } catch (e) {
+        await prefs.remove('token');
+        return null;
+      }
+    }
     _token = storedToken;
     return storedToken;
   }
 
   static Future<void> setToken(String token) async {
-    print('Setting token: $token');
-    _token = token;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('token', token);
+    try {
+      // Basic validation that the token is a proper JWT
+      final parts = token.split('.');
+      if (parts.length != 3) {
+        throw ApiException('Invalid token format');
+      }
+      
+      _token = token;
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('token', token);
+    } catch (e) {
+      throw ApiException('Failed to save token: $e');
+    }
   }
 
   static Future<Map<String, String>> get headers async {
