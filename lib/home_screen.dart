@@ -125,62 +125,58 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     return Scaffold(
-        body: _pages[_currentIndex],
-        extendBody: true,
-        bottomNavigationBar: Container(
-          padding: EdgeInsets.only(
-            left: 20,
-            right: 20,
-            bottom: MediaQuery.of(context).padding.bottom + 10,
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(15),
-            child: Container(
-              height: 60, // Fixe Höhe
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.secondary,
-                borderRadius: BorderRadius.circular(15),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 10,
-                    spreadRadius: 1,
-                    offset: Offset(0, 5),
-                  ),
-                ],
-              ),
-              child: BottomNavigationBar(
-                elevation: 0,
-                onTap: _onTabTapped,
-                currentIndex: _currentIndex,
-                selectedItemColor: Colors.white,
-                unselectedItemColor: Colors.white70,
-                backgroundColor: Colors.transparent,
-                showSelectedLabels: false,
-                showUnselectedLabels: false,
-                type: BottomNavigationBarType.fixed,
-                iconSize: 26, // Kleinere Icons
-                items: const [
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.search),
-                    label: 'Search',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.star),
-                    label: 'Collection',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.favorite),
-                    label: 'Favorites',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.person),
-                    label: 'Profile',
-                  ),
-                ],
-              ),
+      body: _pages[_currentIndex],
+      extendBody: true,
+      bottomNavigationBar: Container(
+        margin: EdgeInsets.only(
+          left: 20,
+          right: 20,
+          bottom: MediaQuery.of(context).padding.bottom + 10,
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 10,
+              spreadRadius: 1,
+              offset: Offset(0, 5),
+            ),
+          ],
+        ),
+          child: Material(
+          elevation: 0,
+          borderRadius: BorderRadius.circular(15),
+          color: Theme.of(context).colorScheme.secondary,
+          child: SizedBox(
+            height: kBottomNavigationBarHeight,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildNavItem(Icons.search, 0),
+                _buildNavItem(Icons.star, 1),
+                _buildNavItem(Icons.favorite, 2),
+                _buildNavItem(Icons.person, 3),
+              ],
             ),
           ),
-        ));
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(IconData icon, int index) {
+    final isSelected = _currentIndex == index;
+    return InkWell(
+      onTap: () => _onTabTapped(index),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Icon(
+          icon,
+          size: 30,
+          color: isSelected ? Colors.white : Colors.white70,
+        ),
+      ),
+    );
   }
 }
