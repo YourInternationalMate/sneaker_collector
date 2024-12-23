@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -54,7 +53,7 @@ class RateLimitException extends ApiException {
 }
 
 class ApiService {
-  static const String baseUrl = 'http://127.0.0.1:5001/api/v1'; // For Android emulator
+  static const String baseUrl = 'http://127.0.0.1:5001/api/v1';
   static String? _token;
 
   static Future<String?> get token async {
@@ -204,10 +203,10 @@ class ApiService {
         headers: await headers,
       ),
       (data) => User(
-        name: data['username'],
-        email: data['email'],
+        name: data['user']['username'],
+        email: data['user']['email'],
         password: '',
-        since: data['since'],
+        since: data['user']['since'],
       ),
     );
   }
