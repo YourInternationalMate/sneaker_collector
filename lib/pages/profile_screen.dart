@@ -15,7 +15,7 @@ class _ProfileState extends State<Profile> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  
+
   User? user;
   bool isLoading = true;
   bool isSaving = false;
@@ -38,11 +38,11 @@ class _ProfileState extends State<Profile> {
 
   void _checkForChanges() {
     if (!mounted) return;
-    
+
     setState(() {
       hasUnsavedChanges = _usernameController.text != user?.name ||
-                         _emailController.text != user?.email ||
-                         _passwordController.text.isNotEmpty;
+          _emailController.text != user?.email ||
+          _passwordController.text.isNotEmpty;
     });
   }
 
@@ -130,7 +130,7 @@ class _ProfileState extends State<Profile> {
 
   Future<void> _saveData() async {
     if (!_formKey.currentState!.validate()) return;
-    
+
     if (!hasUnsavedChanges) {
       _showSuccessSnackbar('No changes to save');
       return;
@@ -145,7 +145,9 @@ class _ProfileState extends State<Profile> {
       final updatedUser = await ApiService.updateProfile(
         username: _usernameController.text,
         email: _emailController.text,
-        password: _passwordController.text.isNotEmpty ? _passwordController.text : null,
+        password: _passwordController.text.isNotEmpty
+            ? _passwordController.text
+            : null,
       );
 
       if (mounted) {
@@ -174,25 +176,39 @@ class _ProfileState extends State<Profile> {
     if (!hasUnsavedChanges) return true;
 
     return await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Discard changes?'),
-        content: const Text('You have unsaved changes. Do you want to discard them?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('CANCEL'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text(
-              'DISCARD',
-              style: TextStyle(color: Colors.red),
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text(
+              'Discard changes?',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.tertiary),
             ),
+            content: Text(
+                'You have unsaved changes. Do you want to discard them?',
+                style: TextStyle(
+                    fontSize: 16,
+                    color: Theme.of(context).colorScheme.tertiary)),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: Text(
+                  'CANCEL',
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.tertiary),
+                ),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text(
+                  'DISCARD',
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-    ) ?? false;
+        ) ??
+        false;
   }
 
   Future<void> _logout() async {
@@ -210,7 +226,10 @@ class _ProfileState extends State<Profile> {
           actions: <Widget>[
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('CANCEL'),
+              child: Text(
+                'CANCEL',
+                style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
+              ),
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(true),
@@ -287,6 +306,50 @@ class _ProfileState extends State<Profile> {
     );
   }
 
+  InputDecoration _getInputDecoration({
+    required String label,
+    required IconData icon,
+    Widget? suffixIcon,
+  }) {
+    return InputDecoration(
+      labelText: label,
+      labelStyle: TextStyle(
+        color: Theme.of(context).colorScheme.tertiary.withOpacity(0.8),
+        fontFamily: 'future',
+      ),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(
+          color: Theme.of(context).colorScheme.tertiary,
+        ),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(
+          color: Theme.of(context).colorScheme.tertiary,
+        ),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(
+          color: Theme.of(context).colorScheme.secondary,
+          width: 2,
+        ),
+      ),
+      prefixIcon: Icon(
+        icon,
+        color: Theme.of(context).colorScheme.secondary,
+      ),
+      suffixIcon: suffixIcon,
+      floatingLabelStyle: TextStyle(
+        color: Theme.of(context).colorScheme.secondary,
+        fontFamily: 'future',
+      ),
+      fillColor: Theme.of(context).colorScheme.surface,
+      filled: true,
+    );
+  }
+
   Widget _buildProfileContent() {
     return SingleChildScrollView(
       child: Form(
@@ -348,38 +411,33 @@ class _ProfileState extends State<Profile> {
                   children: [
                     TextFormField(
                       controller: _usernameController,
-                      decoration: InputDecoration(
-                        labelText: 'USERNAME',
-                        prefixIcon: const Icon(Icons.person),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
+                      decoration: _getInputDecoration(
+                          label: "USERNAME", icon: Icons.person),
                       validator: _validateUsername,
                       enabled: !isSaving,
+                      cursorColor: Theme.of(context).colorScheme.secondary,
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
                       controller: _emailController,
-                      decoration: InputDecoration(
-                        labelText: 'EMAIL',
-                        prefixIcon: const Icon(Icons.email),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
+                      decoration: _getInputDecoration(
+                          label: "EMAIL", icon: Icons.email),
                       validator: _validateEmail,
                       enabled: !isSaving,
+                      cursorColor: Theme.of(context).colorScheme.secondary,
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
                       controller: _passwordController,
-                      decoration: InputDecoration(
-                        labelText: 'NEW PASSWORD',
-                        prefixIcon: const Icon(Icons.lock),
+                      decoration: _getInputDecoration(
+                        label: 'NEW PASSWORD',
+                        icon: Icons.lock,
                         suffixIcon: IconButton(
                           icon: Icon(
-                            isPasswordVisible ? Icons.visibility_off : Icons.visibility,
+                            isPasswordVisible
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                            color: Theme.of(context).colorScheme.secondary,
                           ),
                           onPressed: () {
                             setState(() {
@@ -387,58 +445,62 @@ class _ProfileState extends State<Profile> {
                             });
                           },
                         ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
                       ),
                       obscureText: !isPasswordVisible,
                       validator: _validatePassword,
                       enabled: !isSaving,
+                      cursorColor: Theme.of(context).colorScheme.secondary,
                     ),
                     const SizedBox(height: 30),
+
+                    // In profile_screen.dart, ersetzen Sie die Buttons durch:
 
                     Center(
                       child: Column(
                         children: [
-                          SizedBox(
-                            width: 250,
-                            child: ElevatedButton(
-                              onPressed: isSaving ? null : _saveData,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Theme.of(context).colorScheme.secondary,
-                                foregroundColor: Theme.of(context).colorScheme.primary,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ElevatedButton(
+                                onPressed: isSaving ? null : _saveData,
+                                style: ElevatedButton.styleFrom(
+                                  shape: const CircleBorder(),
+                                  padding: const EdgeInsets.all(20),
+                                  backgroundColor:
+                                      Theme.of(context).colorScheme.surface,
+                                ),
+                                child: isSaving
+                                    ? const SizedBox(
+                                        width: 24,
+                                        height: 24,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                        ),
+                                      )
+                                    : Icon(
+                                        Icons.save,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary,
+                                        size: 24,
+                                      ),
+                              ),
+                              const SizedBox(width: 40),
+                              ElevatedButton(
+                                onPressed: isSaving ? null : _logout,
+                                style: ElevatedButton.styleFrom(
+                                  shape: const CircleBorder(),
+                                  padding: const EdgeInsets.all(20),
+                                  backgroundColor:
+                                      Theme.of(context).colorScheme.surface,
+                                ),
+                                child: Icon(
+                                  Icons.logout,
+                                  color: Theme.of(context).colorScheme.error,
+                                  size: 24,
                                 ),
                               ),
-                              child: isSaving
-                                  ? const SizedBox(
-                                      width: 20,
-                                      height: 20,
-                                      child: CircularProgressIndicator(
-                                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                        strokeWidth: 2,
-                                      ),
-                                    )
-                                  : const Text(
-                                      'SAVE',
-                                      style: TextStyle(
-                                        fontFamily: 'future',
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          TextButton(
-                            onPressed: isSaving ? null : _logout,
-                            child: Text(
-                              'Logout',
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.error,
-                                fontFamily: 'future',
-                              ),
-                            ),
+                            ],
                           ),
                         ],
                       ),

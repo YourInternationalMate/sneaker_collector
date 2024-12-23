@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sneaker_collector/components/size_selection_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:sneaker_collector/models/sneaker.dart';
 import 'package:sneaker_collector/services/api_service.dart';
@@ -61,15 +62,17 @@ class _BuyingScreenState extends State<BuyingScreen> {
   }
 
   Future<void> _toggleCollection() async {
-    if (!isSizeSelected) {
-      setState(() => showSizeError = true);
-      return;
+    if (!widget.sneaker.inCollection) {
+      final selectedSize = await showSizeSelectionDialog(context);
+      if (selectedSize == null) {
+        return;
+      }
+      widget.sneaker.setSize(selectedSize);
     }
 
     setState(() => isAddingToCollection = true);
 
     try {
-      widget.sneaker.setSize(selectedSize!);
       final success = await ApiService.updateCollection(widget.sneaker);
 
       if (mounted) {
@@ -87,8 +90,7 @@ class _BuyingScreenState extends State<BuyingScreen> {
     } catch (e) {
       if (mounted) {
         _showErrorSnackbar(
-          e is ApiException ? e.message : 'Failed to update collection'
-        );
+            e is ApiException ? e.message : 'Failed to update collection');
       }
     } finally {
       if (mounted) {
@@ -118,8 +120,7 @@ class _BuyingScreenState extends State<BuyingScreen> {
     } catch (e) {
       if (mounted) {
         _showErrorSnackbar(
-          e is ApiException ? e.message : 'Failed to update favorites'
-        );
+            e is ApiException ? e.message : 'Failed to update favorites');
       }
     } finally {
       if (mounted) {
@@ -130,7 +131,6 @@ class _BuyingScreenState extends State<BuyingScreen> {
 
   Widget _buildActionButton({
     required IconData icon,
-    required String label,
     required VoidCallback onPressed,
     required bool isLoading,
   }) {
@@ -154,15 +154,6 @@ class _BuyingScreenState extends State<BuyingScreen> {
                   color: Theme.of(context).colorScheme.secondary,
                   size: 24,
                 ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          label,
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.secondary,
-            fontFamily: 'future',
-            fontSize: 12,
-          ),
         ),
       ],
     );
@@ -263,7 +254,7 @@ class _BuyingScreenState extends State<BuyingScreen> {
                 textAlign: TextAlign.center,
               ),
               Text(
-                '\$${widget.sneaker.price.toStringAsFixed(0)}',
+                '\$${widget.sneaker.price.toStringAsFixed(2)}',
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.secondary,
                   fontWeight: FontWeight.bold,
@@ -272,61 +263,31 @@ class _BuyingScreenState extends State<BuyingScreen> {
                 ),
               ),
 
-              // Size Selector
-              if (!widget.sneaker.inCollection) ...[
-                const SizedBox(height: 20),
-                ShoeSizeDropdown(
-                  onSizeSelected: (String size) {
-                    setState(() {
-                      selectedSize = double.parse(size);
-                      isSizeSelected = true;
-                      showSizeError = false;
-                    });
-                  },
-                ),
-                if (showSizeError)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Text(
-                      'Please select a size',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.error,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
-              ],
-
               const SizedBox(height: 40),
 
               // Action Buttons
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   _buildActionButton(
                     icon: widget.sneaker.inCollection
                         ? Icons.star
                         : Icons.star_border,
-                    label: widget.sneaker.inCollection
-                        ? 'In Collection'
-                        : 'Add to Collection',
                     onPressed: _toggleCollection,
                     isLoading: isAddingToCollection,
                   ),
+                  const SizedBox(width: 20),
                   _buildActionButton(
                     icon: widget.sneaker.inFavorites
                         ? Icons.favorite
                         : Icons.favorite_border,
-                    label: widget.sneaker.inFavorites
-                        ? 'In Favorites'
-                        : 'Add to Favorites',
                     onPressed: _toggleFavorite,
                     isLoading: isAddingToFavorites,
                   ),
                 ],
               ),
 
-              const SizedBox(height: 40),
+              const SizedBox(height: 80),
 
               // Buy Buttons
               _buildBuyButton(

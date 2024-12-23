@@ -310,7 +310,7 @@ class _DetailScreenState extends State<DetailScreen> {
                       fontSize: 24,
                     ),
                   ),
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 80),
 
                   // Current Details
                   _buildDetailRow(
@@ -327,7 +327,7 @@ class _DetailScreenState extends State<DetailScreen> {
                     'Size:',
                     _selectedSize,
                   ),
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 80),
 
                   // Action Buttons
                   Row(
@@ -386,19 +386,19 @@ class _DetailScreenState extends State<DetailScreen> {
             ),
           ),
           content: SingleChildScrollView(
-            child: Container(
-              alignment: Alignment.center,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  const SizedBox(height: 20),
-                  
-                  // Purchase Price
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                const SizedBox(height: 20),
+                
+                // Purchase Price
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Text(
-                        "Purchase Price: ",
+                        "Price: ",
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -407,7 +407,6 @@ class _DetailScreenState extends State<DetailScreen> {
                       ),
                       SizedBox(
                         width: 100,
-                        height: 50,
                         child: TextField(
                           controller: _purchasePriceController,
                           keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -416,16 +415,20 @@ class _DetailScreenState extends State<DetailScreen> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                             suffixIcon: const Icon(Icons.attach_money),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                           ),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 20),
+                ),
+                const SizedBox(height: 20),
 
-                  // Amount
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                // Amount
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Text(
                         "Amount: ",
@@ -437,7 +440,6 @@ class _DetailScreenState extends State<DetailScreen> {
                       ),
                       SizedBox(
                         width: 100,
-                        height: 50,
                         child: TextField(
                           controller: _amountController,
                           keyboardType: TextInputType.number,
@@ -445,16 +447,20 @@ class _DetailScreenState extends State<DetailScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                           ),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 20),
+                ),
+                const SizedBox(height: 20),
 
-                  // Size
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                // Size
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Text(
                         "Size: ",
@@ -465,6 +471,7 @@ class _DetailScreenState extends State<DetailScreen> {
                         ),
                       ),
                       ShoeSizeDropdown(
+                        initialSize: widget.sneaker.size.toString(),
                         onSizeSelected: (String size) {
                           setState(() {
                             _selectedSize = size;
@@ -474,45 +481,45 @@ class _DetailScreenState extends State<DetailScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 20),
+                ),
+                const SizedBox(height: 20),
 
-                  // Save Button
-                  ElevatedButton(
-                    onPressed: isSaving ? null : () {
-                      saveChanges();
-                      Navigator.pop(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.secondary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 50,
-                        vertical: 10,
-                      ),
+                // Save Button
+                ElevatedButton(
+                  onPressed: isSaving ? null : () {
+                    saveChanges();
+                    Navigator.pop(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.secondary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                    child: isSaving
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                              strokeWidth: 2,
-                            ),
-                          )
-                        : Text(
-                            "SAVE",
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.primary,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: "Future",
-                            ),
-                          ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 50,
+                      vertical: 10,
+                    ),
                   ),
-                ],
-              ),
+                  child: isSaving
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : Text(
+                          "SAVE",
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: "Future",
+                          ),
+                        ),
+                ),
+              ],
             ),
           ),
         );

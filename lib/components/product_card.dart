@@ -4,8 +4,16 @@ import 'package:sneaker_collector/models/sneaker.dart';
 class ProductCard extends StatelessWidget {
   final Sneaker sneaker;
   final Function onTapFunction;
+  final Function? onCollectionToggle;
+  final Function? onFavoriteToggle;
 
-  const ProductCard(this.sneaker, {super.key, required this.onTapFunction});
+  const ProductCard(
+    this.sneaker, {
+    super.key,
+    required this.onTapFunction,
+    this.onCollectionToggle,
+    this.onFavoriteToggle,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +96,7 @@ class ProductCard extends StatelessWidget {
                       maxLines: 1,
                     ),
                     Text(
-                      '\$${sneaker.price.toStringAsFixed(0)}',
+                      '\$${sneaker.price.toStringAsFixed(2)}',
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.secondary,
                         fontWeight: FontWeight.bold,
@@ -106,12 +114,9 @@ class ProductCard extends StatelessWidget {
                 children: <Widget>[
                   ElevatedButton(
                     onPressed: () {
-                      if (sneaker.inCollection) {
-                        sneaker.setInCollection(false);
-                      } else {
-                        sneaker.setInCollection(true);
-                      }
-                    },
+                      print('DEBUG: Collection toggle pressed for sneaker: ${sneaker.toString()}');
+                      print('DEBUG: Sneaker details - ID: ${sneaker.id}, Model: ${sneaker.model}, Brand: ${sneaker.brand}');
+                      onCollectionToggle!();},
                     style: ElevatedButton.styleFrom(
                       shape: const CircleBorder(),
                       padding: const EdgeInsets.all(10),
@@ -120,13 +125,7 @@ class ProductCard extends StatelessWidget {
                         color: Theme.of(context).colorScheme.secondary),
                   ),
                   ElevatedButton(
-                    onPressed: () {
-                      if (sneaker.inFavorites) {
-                        sneaker.setInFavorites(false);
-                      } else {
-                        sneaker.setInFavorites(true);
-                      }
-                    },
+                    onPressed: () => onFavoriteToggle!(),
                     style: ElevatedButton.styleFrom(
                       shape: const CircleBorder(),
                       padding: const EdgeInsets.all(10),

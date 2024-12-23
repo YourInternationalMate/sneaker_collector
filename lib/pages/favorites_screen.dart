@@ -42,6 +42,53 @@ class _FavoritesState extends State<Favorites> {
     }
   }
 
+  Future<void> _toggleCollection(Sneaker sneaker) async {
+    try {
+      final success = await ApiService.updateCollection(sneaker);
+      if (mounted && success) {
+        setState(() {
+          sneaker.setInCollection(!sneaker.inCollection);
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              sneaker.inCollection ? 'Added to collection' : 'Removed from collection'
+            ),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        _showErrorSnackbar(e);
+      }
+    }
+  }
+
+  Future<void> _toggleFavorite(Sneaker sneaker) async {
+    try {
+      final success = await ApiService.toggleFavorite(sneaker);
+      if (mounted && success) {
+        setState(() {
+          sneaker.setInFavorites(!sneaker.inFavorites);
+          _loadFavorites();
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              sneaker.inFavorites ? 'Added to favorites' : 'Removed from favorites'
+            ),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        _showErrorSnackbar(e);
+      }
+    }
+  }
+
   Future<void> _loadMoreItems() async {
     if (isLoadingMore || currentPage >= totalPages) return;
 
@@ -248,6 +295,8 @@ class _FavoritesState extends State<Favorites> {
                 context,
                 sneakers[index],
               ),
+              onCollectionToggle: () => _toggleCollection(sneakers[index]),
+              onFavoriteToggle: () => _toggleFavorite(sneakers[index]),
             ),
           );
         },

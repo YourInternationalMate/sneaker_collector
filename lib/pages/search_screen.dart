@@ -1,6 +1,6 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:sneaker_collector/components/size_selection_dialog.dart';
 import 'package:sneaker_collector/models/sneaker.dart';
 import 'package:sneaker_collector/services/api_service.dart';
 import 'package:sneaker_collector/components/product_card.dart';
@@ -21,35 +21,20 @@ class _SearchScreenState extends State<Search> {
   String? error;
   TextEditingController searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  
-  // Debouncer für die Suche
   Timer? _debounce;
 
   @override
   void initState() {
     super.initState();
-    searchController.addListener(_onSearchChanged);
     _scrollController.addListener(_onScroll);
   }
 
   @override
   void dispose() {
     _debounce?.cancel();
-    searchController.removeListener(_onSearchChanged);
     searchController.dispose();
     _scrollController.dispose();
     super.dispose();
-  }
-
-  void _onSearchChanged() {
-    if (_debounce?.isActive ?? false) _debounce!.cancel();
-    _debounce = Timer(const Duration(milliseconds: 500), () {
-      final query = searchController.text;
-      if (query != lastQuery) {
-        lastQuery = query;
-        _performSearch(query);
-      }
-    });
   }
 
   void _onScroll() {
@@ -92,41 +77,103 @@ class _SearchScreenState extends State<Search> {
   }
 
   Future<void> _performSearch(String query) async {
+    // Cancel any previous search
+    _debounce?.cancel();
+
     if (query.isEmpty) {
       setState(() {
-        sneakers = [];
+        sneakers.clear();
         error = null;
         currentPage = 1;
         totalPages = 1;
+        lastQuery = '';
       });
       return;
     }
 
-    setState(() {
-      isLoading = true;
-      error = null;
+    // Debounce the search
+    _debounce = Timer(const Duration(milliseconds: 500), () async {
+      if (!mounted) return;
+
+      setState(() {
+        isLoading = true;
+        error = null;
+        lastQuery = query;
+      });
+
+      try {
+        final response = await ApiService.searchSneakers(query, page: 1);
+        if (mounted) {
+          setState(() {
+            sneakers = response.items;
+            currentPage = response.page;
+            totalPages = response.pages;
+            isLoading = false;
+          });
+        }
+      } catch (e) {
+        if (mounted) {
+          setState(() {
+            isLoading = false;
+            error = e is ApiException ? e.message : 'An error occurred. Please try again.';
+            sneakers.clear();
+          });
+          _showErrorSnackbar(error ?? 'Unknown error');
+        }
+      }
     });
+  }
+
+  Future<void> _toggleCollection(Sneaker sneaker) async {
+    if (!sneaker.inCollection) {
+      final selectedSize = await showSizeSelectionDialog(context);
+      if (selectedSize == null) {
+        return;
+      }
+      sneaker.setSize(selectedSize);
+    }
 
     try {
-      final response = await ApiService.searchSneakers(query, page: 1);
-      if (mounted) {
+      final success = await ApiService.updateCollection(sneaker);
+      if (mounted && success) {
         setState(() {
-          sneakers = response.items;
-          currentPage = response.page;
-          totalPages = response.pages;
-          isLoading = false;
+          sneaker.setInCollection(!sneaker.inCollection);
         });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              sneaker.inCollection ? 'Added to collection' : 'Removed from collection'
+            ),
+            backgroundColor: Colors.green,
+          ),
+        );
       }
     } catch (e) {
       if (mounted) {
+        _showErrorSnackbar(e);
+      }
+    }
+  }
+
+  Future<void> _toggleFavorite(Sneaker sneaker) async {
+    try {
+      final success = await ApiService.toggleFavorite(sneaker);
+      if (mounted && success) {
         setState(() {
-          isLoading = false;
-          // Spezifischere Fehlermeldung
-          error = e is ApiException 
-              ? e.message 
-              : 'Ein Fehler ist aufgetreten. Bitte versuche es erneut.';
+          sneaker.setInFavorites(!sneaker.inFavorites);
         });
-        _showErrorSnackbar(error ?? 'Unbekannter Fehler');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              sneaker.inFavorites ? 'Added to favorites' : 'Removed from favorites'
+            ),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        _showErrorSnackbar(e);
       }
     }
   }
@@ -135,6 +182,8 @@ class _SearchScreenState extends State<Search> {
     String message = 'An error occurred';
     if (error is ApiException) {
       message = error.message;
+    } else if (error is String) {
+      message = error;
     }
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -158,28 +207,54 @@ class _SearchScreenState extends State<Search> {
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: TextField(
         controller: searchController,
+        onChanged: _performSearch,
         decoration: InputDecoration(
           labelText: "Search",
+          labelStyle: TextStyle(
+            color: Theme.of(context).colorScheme.tertiary.withOpacity(0.8),
+          ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
             borderSide: BorderSide(
-              color: Theme.of(context).colorScheme.secondary,
+              color: Theme.of(context).colorScheme.tertiary,
             ),
           ),
-          prefixIcon: const Icon(Icons.search),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.tertiary,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.secondary,
+              width: 2,
+            ),
+          ),
+          prefixIcon: Icon(
+            Icons.search,
+            color: Theme.of(context).colorScheme.secondary,
+          ),
           suffixIcon: searchController.text.isNotEmpty
               ? IconButton(
-                  icon: const Icon(Icons.clear),
+                  icon: Icon(
+                    Icons.clear,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
                   onPressed: () {
                     searchController.clear();
-                    setState(() {
-                      sneakers = [];
-                      lastQuery = '';
-                    });
+                    _performSearch('');
                   },
                 )
               : null,
+          floatingLabelStyle: TextStyle(
+            color: Theme.of(context).colorScheme.secondary,
+          ),
+          fillColor: Theme.of(context).colorScheme.surface,
+          filled: true,
         ),
+        cursorColor: Theme.of(context).colorScheme.secondary,
       ),
     );
   }
@@ -211,7 +286,7 @@ class _SearchScreenState extends State<Search> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.secondary,
               ),
-              child: const Text('Erneut versuchen'),
+              child: const Text('Try again'),
             ),
           ],
         ),
@@ -231,8 +306,8 @@ class _SearchScreenState extends State<Search> {
             const SizedBox(height: 16),
             Text(
               searchController.text.isEmpty
-                  ? 'Nach Sneakern suchen'
-                  : 'Keine Sneaker gefunden.',
+                  ? 'Search for sneakers'
+                  : 'No sneakers found.',
               style: const TextStyle(fontSize: 18),
             ),
           ],
@@ -259,11 +334,12 @@ class _SearchScreenState extends State<Search> {
             context,
             sneakers[index],
           ),
+          onCollectionToggle: () => _toggleCollection(sneakers[index]),
+          onFavoriteToggle: () => _toggleFavorite(sneakers[index]),
         );
       },
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -272,15 +348,17 @@ class _SearchScreenState extends State<Search> {
       body: SafeArea(
         child: Column(
           children: <Widget>[
-            const Text(
-              '"Search"',
-              style: TextStyle(
-                fontSize: 40,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'future',
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 20),
+              child: Text(
+                '"Search"',
+                style: TextStyle(
+                  fontSize: 40,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'future',
+                ),
               ),
             ),
-            const SizedBox(height: 20),
             
             _buildSearchBar(),
             const SizedBox(height: 20),

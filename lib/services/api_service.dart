@@ -244,10 +244,17 @@ class ApiService {
         Uri.parse('$baseUrl/collection?page=$page'),
         headers: await headers,
       ),
-      (data) => PaginatedResponse.fromJson(
-        data,
-        (json) => Sneaker.fromJson(json),
-      ),
+      (data) {
+        print('DEBUG: Raw collection response data: $data');
+        final response = PaginatedResponse.fromJson(
+          data,
+          (json) {
+            print('DEBUG: Converting JSON to Sneaker: $json');
+            return Sneaker.fromJson(json);
+          },
+        );
+        return response;
+      },
     );
   }
 
@@ -268,17 +275,21 @@ class ApiService {
   }
 
   static Future<bool> removeFromCollection(Sneaker sneaker) async {
-    return _handleResponse(
-      () async => http.delete(
-        Uri.parse('$baseUrl/collection'),
-        headers: await headers,
-        body: json.encode({
-          'product_id': sneaker.id,
-        }),
-      ),
-      (data) => true,
-    );
-  }
+    print('DEBUG: API Service - Removing sneaker from collection');
+    print('DEBUG: API Service - Sneaker ID: ${sneaker.id}');
+    print('DEBUG: API Service - Full sneaker object: ${sneaker.toString()}');
+
+  return _handleResponse(
+    () async => http.delete(
+      Uri.parse('$baseUrl/collection'),
+      headers: await headers,
+      body: json.encode({
+        'product_id': sneaker.id,
+      }),
+    ),
+    (data) => true,
+  );
+}
 
   // Favorites Methods
   static Future<PaginatedResponse<Sneaker>> getFavorites({int page = 1}) async {

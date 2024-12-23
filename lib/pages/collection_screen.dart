@@ -1,6 +1,7 @@
 // lib/pages/collection_screen.dart
 
 import 'package:flutter/material.dart';
+import 'package:sneaker_collector/components/size_selection_dialog.dart';
 import 'package:sneaker_collector/models/sneaker.dart';
 import 'package:sneaker_collector/components/product_card.dart';
 import 'package:sneaker_collector/pages/detail_screen.dart';
@@ -21,7 +22,7 @@ class _CollectionState extends State<Collection> {
   int totalPages = 1;
   bool isLoadingMore = false;
   double totalValue = 0.0;
-  
+
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -38,7 +39,8 @@ class _CollectionState extends State<Collection> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
       _loadMoreItems();
     }
   }
@@ -80,6 +82,10 @@ class _CollectionState extends State<Collection> {
     try {
       final response = await ApiService.getCollection(page: 1);
       if (mounted) {
+        print('DEBUG: Loaded collection items:');
+        for (var sneaker in response.items) {
+          print('DEBUG: Sneaker - ID: ${sneaker.id}, Model: ${sneaker.model}, Brand: ${sneaker.brand}');
+        }
         setState(() {
           sneakers = response.items;
           currentPage = response.page;
@@ -99,10 +105,10 @@ class _CollectionState extends State<Collection> {
   }
 
   void _updateTotalValue() {
-    totalValue = sneakers.fold(
-      0,
-      (total, sneaker) => total + (sneaker.price * sneaker.count),
-    );
+    totalValue = sneakers.fold(0.0, (total, sneaker) {
+      double itemTotal = (sneaker.price * sneaker.count);
+      return total + itemTotal;
+    });
   }
 
   void _showErrorSnackbar(dynamic error) {
@@ -134,6 +140,60 @@ class _CollectionState extends State<Collection> {
           _updateTotalValue();
         });
         _showErrorSnackbar(e);
+      }
+    }
+  }
+
+  Future<void> _removeFromCollectionWithConfirmation(Sneaker sneaker) async {
+    print('DEBUG: Attempting to remove sneaker: ${sneaker.toString()}'); // Add this line
+    print('DEBUG: Sneaker ID: ${sneaker.id}'); // Add this line
+
+    if (sneaker.id == null) {
+      _showErrorSnackbar('Invalid sneaker ID');
+      return;
+    }
+
+    final shouldRemove = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Remove from Collection'),
+          content: const Text(
+              'Are you sure you want to remove this sneaker from your collection?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text('CANCEL',
+                  style: TextStyle(color: Theme.of(context).colorScheme.tertiary)),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text(
+                'REMOVE',
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (shouldRemove == true) {
+      try {
+        print('DEBUG: Making API call to remove sneaker ID: ${sneaker.id}');
+        await ApiService.removeFromCollection(sneaker);
+        if (mounted) {
+          setState(() {
+            print('DEBUG: Removing sneaker from state, ID: ${sneaker.id}');
+            sneakers.removeWhere((s) => s.id == sneaker.id);
+            _updateTotalValue();
+          });
+        }
+      } catch (e) {
+        if (mounted) {
+          print('DEBUG: Error removing sneaker: $e');
+          _showErrorSnackbar(e);
+        }
       }
     }
   }
@@ -198,6 +258,50 @@ class _CollectionState extends State<Collection> {
     );
   }
 
+  Future<void> _toggleCollection(Sneaker sneaker) async {
+    if (!sneaker.inCollection) {
+      final selectedSize = await showSizeSelectionDialog(context);
+      if (selectedSize == null) {
+        return;
+      }
+      sneaker.setSize(selectedSize);
+    }
+
+    try {
+      final success = await ApiService.updateCollection(sneaker);
+      if (mounted && success) {
+        setState(() {
+          sneaker.setInCollection(!sneaker.inCollection);
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              sneaker.inCollection ? 'Added to collection' : 'Removed from collection'
+            ),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        _showErrorSnackbar(e);
+      }
+    }
+  }
+
+  Future<void> _toggleFavorite(Sneaker sneaker) async {
+    try {
+      final success = await ApiService.toggleFavorite(sneaker);
+      if (mounted && success) {
+        setState(() {
+          sneaker.setInFavorites(!sneaker.inFavorites);
+        });
+      }
+    } catch (e) {
+      _showErrorSnackbar(e);
+    }
+  }
+
   Widget _buildCollectionList() {
     return RefreshIndicator(
       onRefresh: _loadCollection,
@@ -214,53 +318,16 @@ class _CollectionState extends State<Collection> {
               ),
             );
           }
-          
-          return Dismissible(
-            key: Key(sneakers[index].id.toString()),
-            direction: DismissDirection.endToStart,
-            background: Container(
-              alignment: Alignment.centerRight,
-              padding: const EdgeInsets.only(right: 20.0),
-              color: Colors.red,
-              child: const Icon(
-                Icons.delete,
-                color: Colors.white,
-              ),
-            ),
-            confirmDismiss: (direction) async {
-              return await showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: const Text('Remove from Collection'),
-                    content: const Text(
-                      'Are you sure you want to remove this sneaker from your collection?'
-                    ),
-                    actions: <Widget>[
-                      TextButton(
-                        onPressed: () => Navigator.of(context).pop(false),
-                        child: const Text('CANCEL'),
-                      ),
-                      TextButton(
-                        onPressed: () => Navigator.of(context).pop(true),
-                        child: const Text(
-                          'REMOVE',
-                          style: TextStyle(color: Colors.red),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-            onDismissed: (direction) => _removeFromCollection(sneakers[index], index),
-            child: ProductCard(
+
+          return ProductCard(
+            sneakers[index],
+            onTapFunction: () => navigateToDetailScreen(
+              context,
               sneakers[index],
-              onTapFunction: () => navigateToDetailScreen(
-                context,
-                sneakers[index],
-              ),
             ),
+            onCollectionToggle: () =>
+                _removeFromCollectionWithConfirmation(sneakers[index]),
+            onFavoriteToggle: () => _toggleFavorite(sneakers[index]),
           );
         },
       ),
@@ -326,7 +393,6 @@ class _CollectionState extends State<Collection> {
                 ),
               ),
             ),
-
             Expanded(
               child: isLoading
                   ? const Center(child: CircularProgressIndicator())
@@ -336,7 +402,6 @@ class _CollectionState extends State<Collection> {
                           ? _buildEmptyView()
                           : _buildCollectionList(),
             ),
-
             if (!isLoading && error == null && sneakers.isNotEmpty)
               _buildStats(),
           ],

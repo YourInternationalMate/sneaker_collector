@@ -74,26 +74,28 @@ class Sneaker {
   }
 
   factory Sneaker.fromJson(Map<String, dynamic> json) {
-  const defaultSize = 0.1;
-  const defaultCount = 1;
-  const defaultPurchasePrice = 0.0;
-  
-  return Sneaker(
-    id: json['id'],
-    brand: json['brand'] as String,
-    model: json['model'] as String,
-    name: json['name'] as String,
-    imageUrl: json['image_url'] as String,
-    price: (json['price'] as num).toDouble(),
-    count: json['count'] ?? defaultCount,
-    size: json['size']?.toDouble() ?? defaultSize,
-    purchasePrice: json['purchase_price']?.toDouble() ?? defaultPurchasePrice,
-    inCollection: json['in_collection'] ?? false,
-    inFavorites: json['in_favorites'] ?? false,
-    stockXUrl: json['stock_x_url'] as String?,
-    goatUrl: json['goat_url'] as String?,
-  );
-}
+    const defaultSize = 0.1;
+    const defaultCount = 1;
+    const defaultPurchasePrice = 0.0;
+    
+    final id = json['product_id'] ?? json['id'];
+    
+    return Sneaker(
+      id: id,
+      brand: json['brand'] as String,
+      model: json['model'] as String,
+      name: json['name'] as String,
+      imageUrl: json['image_url'] as String,
+      price: (json['price'] as num).toDouble(),
+      count: json['count'] ?? defaultCount,
+      size: json['size']?.toDouble() ?? defaultSize,
+      purchasePrice: json['purchase_price']?.toDouble() ?? defaultPurchasePrice,
+      inCollection: json['in_collection'] ?? false,
+      inFavorites: json['in_favorites'] ?? false,
+      stockXUrl: json['stock_x_url'] as String?,
+      goatUrl: json['goat_url'] as String?,
+    );
+  }
 
   Map<String, dynamic> toJson() {
     return {
