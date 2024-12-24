@@ -29,14 +29,22 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() => _isLoading = true);
 
     try {
-      // Check for valid auth token
+      // Prüfe auf vorhandene Token
       final token = await ApiService.token;
       if (token == null) {
         _redirectToLogin();
         return;
       }
 
-      await ApiService.getUserProfile();
+      // Versuche das Nutzerprofil zu laden
+      try {
+        await ApiService.getUserProfile();
+      } catch (e) {
+        // Wenn das Laden des Profils fehlschlägt, Token löschen und neu einloggen
+        await ApiService.clearTokens();
+        _redirectToLogin();
+        return;
+      }
 
       if (mounted) {
         setState(() {
@@ -50,12 +58,12 @@ class _HomeScreenState extends State<HomeScreen> {
           _isInitialized = true;
         });
       }
-    } on AuthException {
-      _redirectToLogin();
     } catch (e) {
       if (mounted) {
-        _showErrorDialog('Failed to initialize app',
-            'Please check your internet connection and try again.');
+        _showErrorDialog(
+          'Failed to initialize app',
+          'Please check your internet connection and try again.'
+        );
       }
     }
   }

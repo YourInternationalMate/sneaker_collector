@@ -81,7 +81,7 @@ class ProductCard extends StatelessWidget {
                   ),
                 ),
 
-                // Sneaker Details
+                // reaker Details
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[

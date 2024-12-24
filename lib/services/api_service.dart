@@ -54,46 +54,98 @@ class RateLimitException extends ApiException {
 
 class ApiService {
   static const String baseUrl = 'http://127.0.0.1:5001/api/v1';
-  static String? _token;
+  static String? _accessToken;
+  static String? _refreshToken;
+  static DateTime? _tokenExpiry;
 
+  // Token Getter mit automatischer Erneuerung
   static Future<String?> get token async {
-    if (_token != null) {
-      return _token;
-    }
-    final prefs = await SharedPreferences.getInstance();
-    final storedToken = prefs.getString('token');
-    if (storedToken != null) {
-      // Validate stored token
-      try {
-        final parts = storedToken.split('.');
-        if (parts.length != 3) {
-          // Invalid token, clear it
-          await prefs.remove('token');
-          return null;
-        }
-      } catch (e) {
-        await prefs.remove('token');
-        return null;
+    if (_accessToken != null && _tokenExpiry != null) {
+      // Wenn der Token bald abläuft (weniger als 1 Minute), erneuere ihn
+      if (_tokenExpiry!.isBefore(DateTime.now().add(const Duration(minutes: 1)))) {
+        await _refreshAccessToken();
       }
+      return _accessToken;
     }
-    _token = storedToken;
-    return storedToken;
+    
+    // Versuche Token aus SharedPreferences zu laden
+    final prefs = await SharedPreferences.getInstance();
+    _accessToken = prefs.getString('access_token');
+    _refreshToken = prefs.getString('refresh_token');
+    final expiryString = prefs.getString('token_expiry');
+    
+    if (expiryString != null) {
+      _tokenExpiry = DateTime.parse(expiryString);
+    }
+    
+    if (_accessToken != null && _tokenExpiry != null) {
+      if (_tokenExpiry!.isBefore(DateTime.now().add(const Duration(minutes: 1)))) {
+        await _refreshAccessToken();
+      }
+      return _accessToken;
+    }
+    
+    return null;
   }
 
-  static Future<void> setToken(String token) async {
+  static Future<void> setTokens(String accessToken, String refreshToken) async {
     try {
-      // Basic validation that the token is a proper JWT
-      final parts = token.split('.');
-      if (parts.length != 3) {
-        throw ApiException('Invalid token format');
-      }
+      _accessToken = accessToken;
+      _refreshToken = refreshToken;
+      // Setze Ablaufzeit auf 14 Minuten (da Token 15 Minuten gültig ist)
+      _tokenExpiry = DateTime.now().add(const Duration(minutes: 14));
       
-      _token = token;
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('token', token);
+      await prefs.setString('access_token', accessToken);
+      await prefs.setString('refresh_token', refreshToken);
+      await prefs.setString('token_expiry', _tokenExpiry!.toIso8601String());
     } catch (e) {
-      throw ApiException('Failed to save token: $e');
+      throw ApiException('Failed to save tokens: $e');
     }
+  }
+
+  static Future<void> _refreshAccessToken() async {
+    if (_refreshToken == null) {
+      throw AuthException();
+    }
+
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/refresh'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $_refreshToken'
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        _accessToken = data['access_token'];
+        _tokenExpiry = DateTime.now().add(const Duration(minutes: 14));
+        
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('access_token', _accessToken!);
+        await prefs.setString('token_expiry', _tokenExpiry!.toIso8601String());
+      } else {
+        // Bei Fehler alle Token löschen
+        await clearTokens();
+        throw AuthException();
+      }
+    } catch (e) {
+      await clearTokens();
+      throw AuthException();
+    }
+  }
+
+  static Future<void> clearTokens() async {
+    _accessToken = null;
+    _refreshToken = null;
+    _tokenExpiry = null;
+    
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('access_token');
+    await prefs.remove('refresh_token');
+    await prefs.remove('token_expiry');
   }
 
   static Future<Map<String, String>> get headers async {
@@ -153,8 +205,8 @@ class ApiService {
         }),
       ),
       (data) {
-        if (data['token'] != null) {
-          setToken(data['token']);
+        if (data['access_token'] != null && data['refresh_token'] != null) {
+          setTokens(data['access_token'], data['refresh_token']);
         }
         return data;
       },
@@ -177,8 +229,8 @@ class ApiService {
         }),
       ),
       (data) {
-        if (data['token'] != null) {
-          setToken(data['token']);
+        if (data['access_token'] != null && data['refresh_token'] != null) {
+          setTokens(data['access_token'], data['refresh_token']);
         }
         return data;
       },
@@ -187,11 +239,18 @@ class ApiService {
 
   static Future<void> logout() async {
     try {
-      _token = null;
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.remove('token');
-    } catch (e) {
-      throw ApiException('Failed to logout: $e');
+      final token = await ApiService.token;
+      if (token != null) {
+        await http.post(
+          Uri.parse('$baseUrl/logout'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          },
+        );
+      }
+    } finally {
+      await clearTokens();
     }
   }
 
@@ -331,10 +390,24 @@ class ApiService {
   }
 
   // Search Methods
-  static Future<PaginatedResponse<Sneaker>> searchSneakers(String query, {int page = 1}) async {
+  static Future<PaginatedResponse<Sneaker>> searchSneakers(
+    String query, {
+    int page = 1,
+    int limit = 20,
+    String? sort,
+  }) async {
+    final queryParams = {
+      if (query.isNotEmpty) 'query': query,
+      'page': page.toString(),
+      'per_page': limit.toString(),
+      if (sort != null) 'sort': sort,
+    };
+
+    final uri = Uri.parse('$baseUrl/search').replace(queryParameters: queryParams);
+    
     return _handleResponse(
       () async => http.get(
-        Uri.parse('$baseUrl/search?query=$query&page=$page'),
+        uri,
         headers: await headers,
       ),
       (data) => PaginatedResponse.fromJson(

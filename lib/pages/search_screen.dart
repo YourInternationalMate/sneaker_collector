@@ -27,6 +27,7 @@ class _SearchScreenState extends State<Search> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+    _loadInitialSneakers();
   }
 
   @override
@@ -35,6 +36,40 @@ class _SearchScreenState extends State<Search> {
     searchController.dispose();
     _scrollController.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadInitialSneakers() async {
+    setState(() {
+      isLoading = true;
+      error = null;
+    });
+
+    try {
+      // Lade nur die ersten 20 Sneaker, sortiert nach Neuheit
+      final response = await ApiService.searchSneakers(
+        '',
+        page: 1,
+        limit: 20,
+        sort: 'newest'  // Diese Option müsste im Backend unterstützt werden
+      );
+      
+      if (mounted) {
+        setState(() {
+          sneakers = response.items;
+          currentPage = response.page;
+          totalPages = response.pages;
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+          error = e is ApiException ? e.message : 'Failed to load sneakers';
+        });
+        _showErrorSnackbar(error ?? 'Unknown error');
+      }
+    }
   }
 
   void _onScroll() {
@@ -81,13 +116,7 @@ class _SearchScreenState extends State<Search> {
     _debounce?.cancel();
 
     if (query.isEmpty) {
-      setState(() {
-        sneakers.clear();
-        error = null;
-        currentPage = 1;
-        totalPages = 1;
-        lastQuery = '';
-      });
+      _loadInitialSneakers();
       return;
     }
 
@@ -139,14 +168,6 @@ class _SearchScreenState extends State<Search> {
         setState(() {
           sneaker.setInCollection(!sneaker.inCollection);
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              sneaker.inCollection ? 'Added to collection' : 'Removed from collection'
-            ),
-            backgroundColor: Colors.green,
-          ),
-        );
       }
     } catch (e) {
       if (mounted) {
@@ -162,14 +183,6 @@ class _SearchScreenState extends State<Search> {
         setState(() {
           sneaker.setInFavorites(!sneaker.inFavorites);
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              sneaker.inFavorites ? 'Added to favorites' : 'Removed from favorites'
-            ),
-            backgroundColor: Colors.green,
-          ),
-        );
       }
     } catch (e) {
       if (mounted) {
@@ -282,7 +295,9 @@ class _SearchScreenState extends State<Search> {
             ),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: () => _performSearch(searchController.text),
+              onPressed: () => searchController.text.isEmpty 
+                  ? _loadInitialSneakers()
+                  : _performSearch(searchController.text),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.secondary,
               ),
@@ -293,22 +308,20 @@ class _SearchScreenState extends State<Search> {
       );
     }
 
-    if (sneakers.isEmpty) {
+    if (sneakers.isEmpty && searchController.text.isNotEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              searchController.text.isEmpty ? Icons.search : Icons.info_outline,
+              Icons.info_outline,
               size: 48,
               color: Theme.of(context).colorScheme.secondary.withOpacity(0.5),
             ),
             const SizedBox(height: 16),
-            Text(
-              searchController.text.isEmpty
-                  ? 'Search for sneakers'
-                  : 'No sneakers found.',
-              style: const TextStyle(fontSize: 18),
+            const Text(
+              'No sneakers found.',
+              style: TextStyle(fontSize: 18),
             ),
           ],
         ),

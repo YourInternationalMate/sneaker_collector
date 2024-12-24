@@ -132,7 +132,6 @@ class _ProfileState extends State<Profile> {
     if (!_formKey.currentState!.validate()) return;
 
     if (!hasUnsavedChanges) {
-      _showSuccessSnackbar('No changes to save');
       return;
     }
 

@@ -273,14 +273,6 @@ class _CollectionState extends State<Collection> {
         setState(() {
           sneaker.setInCollection(!sneaker.inCollection);
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              sneaker.inCollection ? 'Added to collection' : 'Removed from collection'
-            ),
-            backgroundColor: Colors.green,
-          ),
-        );
       }
     } catch (e) {
       if (mounted) {

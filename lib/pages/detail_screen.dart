@@ -93,11 +93,6 @@ class _DetailScreenState extends State<DetailScreen> {
         setState(() {
           widget.sneaker.setInFavorites(!widget.sneaker.inFavorites);
         });
-        _showSuccessSnackbar(
-          widget.sneaker.inFavorites
-              ? 'Added to favorites'
-              : 'Removed from favorites'
-        );
       }
     } catch (e) {
       if (mounted) {
@@ -116,16 +111,6 @@ class _DetailScreenState extends State<DetailScreen> {
         content: Text(error is ApiException ? error.message : 'An error occurred'),
         backgroundColor: Theme.of(context).colorScheme.error,
         duration: const Duration(seconds: 3),
-      ),
-    );
-  }
-
-  void _showSuccessSnackbar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.green,
-        duration: const Duration(seconds: 2),
       ),
     );
   }
@@ -174,7 +159,6 @@ class _DetailScreenState extends State<DetailScreen> {
         setState(() {
           hasUnsavedChanges = false;
         });
-        _showSuccessSnackbar('Changes saved successfully');
         Navigator.pop(context, true);
       }
     } catch (e) {

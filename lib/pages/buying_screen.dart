@@ -51,16 +51,6 @@ class _BuyingScreenState extends State<BuyingScreen> {
     );
   }
 
-  void _showSuccessSnackbar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.green,
-        duration: const Duration(seconds: 2),
-      ),
-    );
-  }
-
   Future<void> _toggleCollection() async {
     if (!widget.sneaker.inCollection) {
       final selectedSize = await showSizeSelectionDialog(context);
@@ -80,11 +70,6 @@ class _BuyingScreenState extends State<BuyingScreen> {
           setState(() {
             widget.sneaker.setInCollection(!widget.sneaker.inCollection);
           });
-          _showSuccessSnackbar(
-            widget.sneaker.inCollection
-                ? 'Added to collection'
-                : 'Removed from collection',
-          );
         }
       }
     } catch (e) {
@@ -110,11 +95,6 @@ class _BuyingScreenState extends State<BuyingScreen> {
           setState(() {
             widget.sneaker.setInFavorites(!widget.sneaker.inFavorites);
           });
-          _showSuccessSnackbar(
-            widget.sneaker.inFavorites
-                ? 'Added to favorites'
-                : 'Removed from favorites',
-          );
         }
       }
     } catch (e) {

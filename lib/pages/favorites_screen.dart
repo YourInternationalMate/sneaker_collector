@@ -49,14 +49,6 @@ class _FavoritesState extends State<Favorites> {
         setState(() {
           sneaker.setInCollection(!sneaker.inCollection);
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              sneaker.inCollection ? 'Added to collection' : 'Removed from collection'
-            ),
-            backgroundColor: Colors.green,
-          ),
-        );
       }
     } catch (e) {
       if (mounted) {
@@ -73,14 +65,6 @@ class _FavoritesState extends State<Favorites> {
           sneaker.setInFavorites(!sneaker.inFavorites);
           _loadFavorites();
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              sneaker.inFavorites ? 'Added to favorites' : 'Removed from favorites'
-            ),
-            backgroundColor: Colors.green,
-          ),
-        );
       }
     } catch (e) {
       if (mounted) {
