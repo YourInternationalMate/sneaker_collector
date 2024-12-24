@@ -84,7 +84,7 @@ class ProductCard extends StatelessWidget {
                   ),
                 ),
 
-                // Sneaker Details
+                // reaker Details
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
@@ -331,14 +331,22 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() => _isLoading = true);
 
     try {
-      // Check for valid auth token
+      // Prüfe auf vorhandene Token
       final token = await ApiService.token;
       if (token == null) {
         _redirectToLogin();
         return;
       }
 
-      await ApiService.getUserProfile();
+      // Versuche das Nutzerprofil zu laden
+      try {
+        await ApiService.getUserProfile();
+      } catch (e) {
+        // Wenn das Laden des Profils fehlschlägt, Token löschen und neu einloggen
+        await ApiService.clearTokens();
+        _redirectToLogin();
+        return;
+      }
 
       if (mounted) {
         setState(() {
@@ -352,12 +360,12 @@ class _HomeScreenState extends State<HomeScreen> {
           _isInitialized = true;
         });
       }
-    } on AuthException {
-      _redirectToLogin();
     } catch (e) {
       if (mounted) {
-        _showErrorDialog('Failed to initialize app',
-            'Please check your internet connection and try again.');
+        _showErrorDialog(
+          'Failed to initialize app',
+          'Please check your internet connection and try again.'
+        );
       }
     }
   }
@@ -804,16 +812,6 @@ class _BuyingScreenState extends State<BuyingScreen> {
     );
   }
 
-  void _showSuccessSnackbar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.green,
-        duration: const Duration(seconds: 2),
-      ),
-    );
-  }
-
   Future<void> _toggleCollection() async {
     if (!widget.sneaker.inCollection) {
       final selectedSize = await showSizeSelectionDialog(context);
@@ -833,11 +831,6 @@ class _BuyingScreenState extends State<BuyingScreen> {
           setState(() {
             widget.sneaker.setInCollection(!widget.sneaker.inCollection);
           });
-          _showSuccessSnackbar(
-            widget.sneaker.inCollection
-                ? 'Added to collection'
-                : 'Removed from collection',
-          );
         }
       }
     } catch (e) {
@@ -863,11 +856,6 @@ class _BuyingScreenState extends State<BuyingScreen> {
           setState(() {
             widget.sneaker.setInFavorites(!widget.sneaker.inFavorites);
           });
-          _showSuccessSnackbar(
-            widget.sneaker.inFavorites
-                ? 'Added to favorites'
-                : 'Removed from favorites',
-          );
         }
       }
     } catch (e) {
@@ -1340,14 +1328,6 @@ class _CollectionState extends State<Collection> {
         setState(() {
           sneaker.setInCollection(!sneaker.inCollection);
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              sneaker.inCollection ? 'Added to collection' : 'Removed from collection'
-            ),
-            backgroundColor: Colors.green,
-          ),
-        );
       }
     } catch (e) {
       if (mounted) {
@@ -1578,11 +1558,6 @@ class _DetailScreenState extends State<DetailScreen> {
         setState(() {
           widget.sneaker.setInFavorites(!widget.sneaker.inFavorites);
         });
-        _showSuccessSnackbar(
-          widget.sneaker.inFavorites
-              ? 'Added to favorites'
-              : 'Removed from favorites'
-        );
       }
     } catch (e) {
       if (mounted) {
@@ -1601,16 +1576,6 @@ class _DetailScreenState extends State<DetailScreen> {
         content: Text(error is ApiException ? error.message : 'An error occurred'),
         backgroundColor: Theme.of(context).colorScheme.error,
         duration: const Duration(seconds: 3),
-      ),
-    );
-  }
-
-  void _showSuccessSnackbar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.green,
-        duration: const Duration(seconds: 2),
       ),
     );
   }
@@ -1659,7 +1624,6 @@ class _DetailScreenState extends State<DetailScreen> {
         setState(() {
           hasUnsavedChanges = false;
         });
-        _showSuccessSnackbar('Changes saved successfully');
         Navigator.pop(context, true);
       }
     } catch (e) {
@@ -2068,14 +2032,6 @@ class _FavoritesState extends State<Favorites> {
         setState(() {
           sneaker.setInCollection(!sneaker.inCollection);
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              sneaker.inCollection ? 'Added to collection' : 'Removed from collection'
-            ),
-            backgroundColor: Colors.green,
-          ),
-        );
       }
     } catch (e) {
       if (mounted) {
@@ -2092,14 +2048,6 @@ class _FavoritesState extends State<Favorites> {
           sneaker.setInFavorites(!sneaker.inFavorites);
           _loadFavorites();
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              sneaker.inFavorites ? 'Added to favorites' : 'Removed from favorites'
-            ),
-            backgroundColor: Colors.green,
-          ),
-        );
       }
     } catch (e) {
       if (mounted) {
@@ -3021,7 +2969,6 @@ class _ProfileState extends State<Profile> {
     if (!_formKey.currentState!.validate()) return;
 
     if (!hasUnsavedChanges) {
-      _showSuccessSnackbar('No changes to save');
       return;
     }
 
@@ -3453,6 +3400,7 @@ class _SearchScreenState extends State<Search> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+    _loadInitialSneakers();
   }
 
   @override
@@ -3461,6 +3409,40 @@ class _SearchScreenState extends State<Search> {
     searchController.dispose();
     _scrollController.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadInitialSneakers() async {
+    setState(() {
+      isLoading = true;
+      error = null;
+    });
+
+    try {
+      // Lade nur die ersten 20 Sneaker, sortiert nach Neuheit
+      final response = await ApiService.searchSneakers(
+        '',
+        page: 1,
+        limit: 20,
+        sort: 'newest'  // Diese Option müsste im Backend unterstützt werden
+      );
+      
+      if (mounted) {
+        setState(() {
+          sneakers = response.items;
+          currentPage = response.page;
+          totalPages = response.pages;
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+          error = e is ApiException ? e.message : 'Failed to load sneakers';
+        });
+        _showErrorSnackbar(error ?? 'Unknown error');
+      }
+    }
   }
 
   void _onScroll() {
@@ -3507,13 +3489,7 @@ class _SearchScreenState extends State<Search> {
     _debounce?.cancel();
 
     if (query.isEmpty) {
-      setState(() {
-        sneakers.clear();
-        error = null;
-        currentPage = 1;
-        totalPages = 1;
-        lastQuery = '';
-      });
+      _loadInitialSneakers();
       return;
     }
 
@@ -3565,14 +3541,6 @@ class _SearchScreenState extends State<Search> {
         setState(() {
           sneaker.setInCollection(!sneaker.inCollection);
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              sneaker.inCollection ? 'Added to collection' : 'Removed from collection'
-            ),
-            backgroundColor: Colors.green,
-          ),
-        );
       }
     } catch (e) {
       if (mounted) {
@@ -3588,14 +3556,6 @@ class _SearchScreenState extends State<Search> {
         setState(() {
           sneaker.setInFavorites(!sneaker.inFavorites);
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              sneaker.inFavorites ? 'Added to favorites' : 'Removed from favorites'
-            ),
-            backgroundColor: Colors.green,
-          ),
-        );
       }
     } catch (e) {
       if (mounted) {
@@ -3708,7 +3668,9 @@ class _SearchScreenState extends State<Search> {
             ),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: () => _performSearch(searchController.text),
+              onPressed: () => searchController.text.isEmpty 
+                  ? _loadInitialSneakers()
+                  : _performSearch(searchController.text),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.secondary,
               ),
@@ -3719,22 +3681,20 @@ class _SearchScreenState extends State<Search> {
       );
     }
 
-    if (sneakers.isEmpty) {
+    if (sneakers.isEmpty && searchController.text.isNotEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              searchController.text.isEmpty ? Icons.search : Icons.info_outline,
+              Icons.info_outline,
               size: 48,
               color: Theme.of(context).colorScheme.secondary.withOpacity(0.5),
             ),
             const SizedBox(height: 16),
-            Text(
-              searchController.text.isEmpty
-                  ? 'Search for sneakers'
-                  : 'No sneakers found.',
-              style: const TextStyle(fontSize: 18),
+            const Text(
+              'No sneakers found.',
+              style: TextStyle(fontSize: 18),
             ),
           ],
         ),
@@ -3859,46 +3819,98 @@ class RateLimitException extends ApiException {
 
 class ApiService {
   static const String baseUrl = 'http://127.0.0.1:5001/api/v1';
-  static String? _token;
+  static String? _accessToken;
+  static String? _refreshToken;
+  static DateTime? _tokenExpiry;
 
+  // Token Getter mit automatischer Erneuerung
   static Future<String?> get token async {
-    if (_token != null) {
-      return _token;
-    }
-    final prefs = await SharedPreferences.getInstance();
-    final storedToken = prefs.getString('token');
-    if (storedToken != null) {
-      // Validate stored token
-      try {
-        final parts = storedToken.split('.');
-        if (parts.length != 3) {
-          // Invalid token, clear it
-          await prefs.remove('token');
-          return null;
-        }
-      } catch (e) {
-        await prefs.remove('token');
-        return null;
+    if (_accessToken != null && _tokenExpiry != null) {
+      // Wenn der Token bald abläuft (weniger als 1 Minute), erneuere ihn
+      if (_tokenExpiry!.isBefore(DateTime.now().add(const Duration(minutes: 1)))) {
+        await _refreshAccessToken();
       }
+      return _accessToken;
     }
-    _token = storedToken;
-    return storedToken;
+    
+    // Versuche Token aus SharedPreferences zu laden
+    final prefs = await SharedPreferences.getInstance();
+    _accessToken = prefs.getString('access_token');
+    _refreshToken = prefs.getString('refresh_token');
+    final expiryString = prefs.getString('token_expiry');
+    
+    if (expiryString != null) {
+      _tokenExpiry = DateTime.parse(expiryString);
+    }
+    
+    if (_accessToken != null && _tokenExpiry != null) {
+      if (_tokenExpiry!.isBefore(DateTime.now().add(const Duration(minutes: 1)))) {
+        await _refreshAccessToken();
+      }
+      return _accessToken;
+    }
+    
+    return null;
   }
 
-  static Future<void> setToken(String token) async {
+  static Future<void> setTokens(String accessToken, String refreshToken) async {
     try {
-      // Basic validation that the token is a proper JWT
-      final parts = token.split('.');
-      if (parts.length != 3) {
-        throw ApiException('Invalid token format');
-      }
+      _accessToken = accessToken;
+      _refreshToken = refreshToken;
+      // Setze Ablaufzeit auf 14 Minuten (da Token 15 Minuten gültig ist)
+      _tokenExpiry = DateTime.now().add(const Duration(minutes: 14));
       
-      _token = token;
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('token', token);
+      await prefs.setString('access_token', accessToken);
+      await prefs.setString('refresh_token', refreshToken);
+      await prefs.setString('token_expiry', _tokenExpiry!.toIso8601String());
     } catch (e) {
-      throw ApiException('Failed to save token: $e');
+      throw ApiException('Failed to save tokens: $e');
     }
+  }
+
+  static Future<void> _refreshAccessToken() async {
+    if (_refreshToken == null) {
+      throw AuthException();
+    }
+
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/refresh'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $_refreshToken'
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        _accessToken = data['access_token'];
+        _tokenExpiry = DateTime.now().add(const Duration(minutes: 14));
+        
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('access_token', _accessToken!);
+        await prefs.setString('token_expiry', _tokenExpiry!.toIso8601String());
+      } else {
+        // Bei Fehler alle Token löschen
+        await clearTokens();
+        throw AuthException();
+      }
+    } catch (e) {
+      await clearTokens();
+      throw AuthException();
+    }
+  }
+
+  static Future<void> clearTokens() async {
+    _accessToken = null;
+    _refreshToken = null;
+    _tokenExpiry = null;
+    
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('access_token');
+    await prefs.remove('refresh_token');
+    await prefs.remove('token_expiry');
   }
 
   static Future<Map<String, String>> get headers async {
@@ -3958,8 +3970,8 @@ class ApiService {
         }),
       ),
       (data) {
-        if (data['token'] != null) {
-          setToken(data['token']);
+        if (data['access_token'] != null && data['refresh_token'] != null) {
+          setTokens(data['access_token'], data['refresh_token']);
         }
         return data;
       },
@@ -3982,8 +3994,8 @@ class ApiService {
         }),
       ),
       (data) {
-        if (data['token'] != null) {
-          setToken(data['token']);
+        if (data['access_token'] != null && data['refresh_token'] != null) {
+          setTokens(data['access_token'], data['refresh_token']);
         }
         return data;
       },
@@ -3992,11 +4004,18 @@ class ApiService {
 
   static Future<void> logout() async {
     try {
-      _token = null;
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.remove('token');
-    } catch (e) {
-      throw ApiException('Failed to logout: $e');
+      final token = await ApiService.token;
+      if (token != null) {
+        await http.post(
+          Uri.parse('$baseUrl/logout'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          },
+        );
+      }
+    } finally {
+      await clearTokens();
     }
   }
 
@@ -4136,10 +4155,24 @@ class ApiService {
   }
 
   // Search Methods
-  static Future<PaginatedResponse<Sneaker>> searchSneakers(String query, {int page = 1}) async {
+  static Future<PaginatedResponse<Sneaker>> searchSneakers(
+    String query, {
+    int page = 1,
+    int limit = 20,
+    String? sort,
+  }) async {
+    final queryParams = {
+      if (query.isNotEmpty) 'query': query,
+      'page': page.toString(),
+      'per_page': limit.toString(),
+      if (sort != null) 'sort': sort,
+    };
+
+    final uri = Uri.parse('$baseUrl/search').replace(queryParameters: queryParams);
+    
     return _handleResponse(
       () async => http.get(
-        Uri.parse('$baseUrl/search?query=$query&page=$page'),
+        uri,
         headers: await headers,
       ),
       (data) => PaginatedResponse.fromJson(

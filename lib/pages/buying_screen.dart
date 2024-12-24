@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sneaker_collector/components/retry_button.dart';
 import 'package:sneaker_collector/components/size_selection_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:sneaker_collector/models/sneaker.dart';

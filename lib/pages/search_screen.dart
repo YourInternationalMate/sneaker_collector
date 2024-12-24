@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:sneaker_collector/components/retry_button.dart';
 import 'package:sneaker_collector/components/size_selection_dialog.dart';
 import 'package:sneaker_collector/models/sneaker.dart';
 import 'package:sneaker_collector/services/api_service.dart';
@@ -211,6 +212,27 @@ class _SearchScreenState extends State<Search> {
       context,
       MaterialPageRoute(
         builder: (context) => BuyingScreen(sneaker: sneaker),
+      ),
+    );
+  }
+
+  Widget _buildErrorView() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(error ?? 'An error occurred'),
+          const SizedBox(height: 20),
+          RetryButton(
+            onRetry: () {
+              setState(() {
+                error = null;
+                isLoading = true;
+              });
+              _performSearch(searchController.text);
+            },
+          ),
+        ],
       ),
     );
   }

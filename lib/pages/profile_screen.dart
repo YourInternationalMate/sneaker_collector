@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sneaker_collector/components/retry_button.dart';
 import 'package:sneaker_collector/models/user.dart';
 import 'package:sneaker_collector/services/api_service.dart';
 import 'package:sneaker_collector/pages/login_screen.dart';
@@ -287,18 +288,10 @@ class _ProfileState extends State<Profile> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            error ?? 'An error occurred',
-            style: const TextStyle(fontSize: 18, color: Colors.red),
-            textAlign: TextAlign.center,
-          ),
+          Text(error ?? 'Failed to load profile'),
           const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: _loadUserProfile,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.secondary,
-            ),
-            child: const Text('Retry'),
+          RetryButton(
+            onRetry: _loadUserProfile,
           ),
         ],
       ),

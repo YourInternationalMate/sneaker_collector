@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sneaker_collector/components/retry_button.dart';
 import 'package:sneaker_collector/services/api_service.dart';
 import 'package:sneaker_collector/pages/favorites_screen.dart';
 import 'package:sneaker_collector/pages/search_screen.dart';
@@ -83,23 +84,19 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(title),
-          content: Text(message),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('RETRY'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                _initializeApp();
-              },
-            ),
-            TextButton(
-              child: const Text('LOGOUT'),
-              onPressed: () async {
-                await ApiService.logout();
-                _redirectToLogin();
-              },
-            ),
-          ],
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(message),
+              const SizedBox(height: 20),
+              RetryButton(
+                onRetry: () {
+                  Navigator.of(context).pop();
+                  _initializeApp();
+                },
+              ),
+            ],
+          ),
         );
       },
     );

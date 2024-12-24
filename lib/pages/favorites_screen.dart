@@ -1,6 +1,7 @@
 // lib/pages/favorites_screen.dart
 
 import 'package:flutter/material.dart';
+import 'package:sneaker_collector/components/retry_button.dart';
 import 'package:sneaker_collector/models/sneaker.dart';
 import 'package:sneaker_collector/services/api_service.dart';
 import 'package:sneaker_collector/components/product_card.dart';
@@ -170,28 +171,20 @@ class _FavoritesState extends State<Favorites> {
     }
   }
 
-  Widget _buildErrorView() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            error ?? 'An error occurred',
-            style: const TextStyle(fontSize: 18, color: Colors.red),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: _loadFavorites,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.secondary,
-            ),
-            child: const Text('Retry'),
-          ),
-        ],
-      ),
-    );
-  }
+Widget _buildErrorView() {
+  return Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(error ?? 'Failed to load favorites'),
+        const SizedBox(height: 20),
+        RetryButton(
+          onRetry: _loadFavorites,
+        ),
+      ],
+    ),
+  );
+}
 
   Widget _buildEmptyView() {
     return Center(

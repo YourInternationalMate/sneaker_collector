@@ -1,6 +1,7 @@
 // lib/pages/login_screen.dart
 
 import 'package:flutter/material.dart';
+import 'package:sneaker_collector/components/retry_button.dart';
 import 'package:sneaker_collector/services/api_service.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -73,6 +74,28 @@ class _LoginScreenState extends State<LoginScreen> {
       return 'Password must contain at least one special character';
     }
     return null;
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Error'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(message),
+            const SizedBox(height: 20),
+            RetryButton(
+              onRetry: () {
+                Navigator.of(context).pop();
+                _handleLogin();
+              },
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   void _showErrorSnackbar(String message) {

@@ -1,6 +1,7 @@
 // lib/pages/detail_screen.dart
 
 import 'package:flutter/material.dart';
+import 'package:sneaker_collector/components/retry_button.dart';
 import 'package:sneaker_collector/models/sneaker.dart';
 import 'package:sneaker_collector/components/shoe_size_dropdown.dart';
 import 'package:sneaker_collector/services/api_service.dart';
@@ -172,6 +173,21 @@ class _DetailScreenState extends State<DetailScreen> {
         });
       }
     }
+  }
+
+  Widget _buildErrorView() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(error ?? 'Failed to update sneaker'),
+          const SizedBox(height: 20),
+          RetryButton(
+            onRetry: saveChanges,
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildDetailRow(String label, String value) {
