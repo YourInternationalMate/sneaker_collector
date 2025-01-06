@@ -1,0 +1,71 @@
+2024-12-24 13:00:14,426 [INFO] 127.0.0.1 - 853fd00c-c892-45ef-a602-8323d1a37f36: Found 0 matching products
+2024-12-24 13:00:14,432 [INFO] 127.0.0.1 - 853fd00c-c892-45ef-a602-8323d1a37f36: Returning 0 products
+2024-12-24 13:00:15,323 [INFO] 127.0.0.1 - 7619bfd2-ae45-44d8-a7c2-4100a8e0f6d9: Search request - Query: 'nike', Page: 1, Per page: 20
+2024-12-24 13:00:15,327 [INFO] 127.0.0.1 - 7619bfd2-ae45-44d8-a7c2-4100a8e0f6d9: Found 6 matching products
+2024-12-24 13:00:15,329 [INFO] 127.0.0.1 - 7619bfd2-ae45-44d8-a7c2-4100a8e0f6d9: Returning 6 products
+2024-12-24 13:00:19,406 [INFO] 127.0.0.1 - 1cd830a7-d772-4a7b-b9dd-6c21bc8a1b26: Search request - Query: 'Nike', Page: 1, Per page: 20
+2024-12-24 13:00:19,409 [INFO] 127.0.0.1 - 1cd830a7-d772-4a7b-b9dd-6c21bc8a1b26: Found 6 matching products
+2024-12-24 13:00:19,412 [INFO] 127.0.0.1 - 1cd830a7-d772-4a7b-b9dd-6c21bc8a1b26: Returning 6 products
+2024-12-24 13:00:26,139 [INFO] 127.0.0.1 - 06de0132-cc29-477b-aad2-3bdfb4f8a325: Search request - Query: '', Page: 1, Per page: 20
+2024-12-24 13:00:26,140 [INFO] 127.0.0.1 - 06de0132-cc29-477b-aad2-3bdfb4f8a325: Found 10 matching products
+2024-12-24 13:00:26,141 [INFO] 127.0.0.1 - 06de0132-cc29-477b-aad2-3bdfb4f8a325: Returning 10 products
+2024-12-24 13:00:26,818 [INFO] 127.0.0.1 - fb442d7d-d5e3-4ec8-8ce5-a717e3c42e36: Search request - Query: 'y', Page: 1, Per page: 20
+2024-12-24 13:00:26,821 [INFO] 127.0.0.1 - fb442d7d-d5e3-4ec8-8ce5-a717e3c42e36: Found 4 matching products
+2024-12-24 13:00:26,823 [INFO] 127.0.0.1 - fb442d7d-d5e3-4ec8-8ce5-a717e3c42e36: Returning 4 products
+2024-12-24 13:00:28,016 [INFO] 127.0.0.1 - ea5b7c57-6d5a-4431-bdb3-be78b556d2ed: Search request - Query: 'Yeezy', Page: 1, Per page: 20
+2024-12-24 13:00:28,020 [INFO] 127.0.0.1 - ea5b7c57-6d5a-4431-bdb3-be78b556d2ed: Found 2 matching products
+2024-12-24 13:00:28,022 [INFO] 127.0.0.1 - ea5b7c57-6d5a-4431-bdb3-be78b556d2ed: Returning 2 products
+2024-12-24 13:04:27,088 [INFO] 127.0.0.1 - 22ddbb31-00bd-4fd2-80e9-35d6d69ef54f: Search request - Query: '', Page: 1, Per page: 20
+2024-12-24 13:04:27,092 [INFO] 127.0.0.1 - 22ddbb31-00bd-4fd2-80e9-35d6d69ef54f: Found 10 matching products
+2024-12-24 13:04:27,093 [INFO] 127.0.0.1 - 22ddbb31-00bd-4fd2-80e9-35d6d69ef54f: Returning 10 products
+2024-12-24 13:04:29,414 [INFO] 127.0.0.1 - 4eec3e88-2a8a-471f-a164-957e96daf2e3: Search request - Query: '', Page: 1, Per page: 20
+2024-12-24 13:04:29,416 [INFO] 127.0.0.1 - 4eec3e88-2a8a-471f-a164-957e96daf2e3: Found 10 matching products
+2024-12-24 13:04:29,416 [INFO] 127.0.0.1 - 4eec3e88-2a8a-471f-a164-957e96daf2e3: Returning 10 products
+2024-12-24 13:11:07,332 [INFO] 127.0.0.1 - 3cc35e02-9d76-4b2d-95c2-c0464b8677c6: Successful login for user: test
+2024-12-24 13:11:07,382 [INFO] 127.0.0.1 - 7c66b148-a527-4f4e-a0bd-10d3f599c8d0: Profile request for user_id: 1
+2024-12-24 13:11:07,438 [INFO] 127.0.0.1 - d6bc1381-caf0-48f3-84b2-8ae629ae77c7: Search request - Query: '', Page: 1, Per page: 20
+2024-12-24 13:11:07,440 [INFO] 127.0.0.1 - d6bc1381-caf0-48f3-84b2-8ae629ae77c7: Found 10 matching products
+2024-12-24 13:11:07,442 [INFO] 127.0.0.1 - d6bc1381-caf0-48f3-84b2-8ae629ae77c7: Returning 10 products
+2025-01-06 17:11:14,345 [WARNING] 127.0.0.1 - cb23177e-0301-4779-9c66-b622b8d16d87: Failed login attempt for username: test
+2025-01-06 17:11:21,554 [INFO] 127.0.0.1 - 79945873-da62-4aaa-a2e9-2ec2956e9179: Successful login for user: test
+2025-01-06 17:11:21,602 [INFO] 127.0.0.1 - 060e733a-d530-4dce-aa18-2ad717f38d0e: Profile request for user_id: 1
+2025-01-06 17:11:21,641 [INFO] 127.0.0.1 - 859afdd9-ad12-440a-92f7-9488868344a0: Search request - Query: '', Page: 1, Per page: 20
+2025-01-06 17:11:21,652 [INFO] 127.0.0.1 - 859afdd9-ad12-440a-92f7-9488868344a0: Found 10 matching products
+2025-01-06 17:11:21,654 [INFO] 127.0.0.1 - 859afdd9-ad12-440a-92f7-9488868344a0: Returning 10 products
+2025-01-06 17:11:30,078 [INFO] 127.0.0.1 - 9e8b9867-f7fc-4d14-a383-dd921503177e: Favorites request - Method: GET, User ID: 1
+2025-01-06 17:11:30,727 [INFO] 127.0.0.1 - f13fd3f2-e4dc-4bbf-9e5e-62af2ec86047: Profile request for user_id: 1
+2025-01-06 17:11:32,192 [INFO] 127.0.0.1 - d7bf0312-1af2-4bf8-a1d9-aa083c45abca: Favorites request - Method: GET, User ID: 1
+2025-01-06 17:11:32,900 [INFO] 127.0.0.1 - 9e3b7fa9-25d9-4747-b2d6-f31d8a26a108: Search request - Query: '', Page: 1, Per page: 20
+2025-01-06 17:11:32,902 [INFO] 127.0.0.1 - 9e3b7fa9-25d9-4747-b2d6-f31d8a26a108: Found 10 matching products
+2025-01-06 17:11:32,903 [INFO] 127.0.0.1 - 9e3b7fa9-25d9-4747-b2d6-f31d8a26a108: Returning 10 products
+2025-01-06 17:11:48,197 [INFO] 127.0.0.1 - 9a8df1f6-c4e0-444d-a105-474256ee0196: Profile request for user_id: 1
+2025-01-06 17:12:15,990 [INFO] 127.0.0.1 - 95cef899-bf40-40ac-8f7f-cdba71c24b84: Successful login for user: test
+2025-01-06 17:12:16,022 [INFO] 127.0.0.1 - 97c695ae-a958-4a95-83e5-ad5abd0e0dbb: Profile request for user_id: 1
+2025-01-06 17:12:16,055 [INFO] 127.0.0.1 - 40345450-f7a3-4046-ba07-5f0d413922d3: Search request - Query: '', Page: 1, Per page: 20
+2025-01-06 17:12:16,056 [INFO] 127.0.0.1 - 40345450-f7a3-4046-ba07-5f0d413922d3: Found 10 matching products
+2025-01-06 17:12:16,057 [INFO] 127.0.0.1 - 40345450-f7a3-4046-ba07-5f0d413922d3: Returning 10 products
+2025-01-06 17:12:22,740 [INFO] 127.0.0.1 - 4cf6cf15-8b69-4cec-bed9-f880158736d3: Search request - Query: 'A', Page: 1, Per page: 20
+2025-01-06 17:12:22,746 [INFO] 127.0.0.1 - 4cf6cf15-8b69-4cec-bed9-f880158736d3: Found 10 matching products
+2025-01-06 17:12:22,749 [INFO] 127.0.0.1 - 4cf6cf15-8b69-4cec-bed9-f880158736d3: Returning 10 products
+2025-01-06 17:12:24,723 [INFO] 127.0.0.1 - b71d3507-68b3-4652-8ab4-f563bf5fa998: Search request - Query: '', Page: 1, Per page: 20
+2025-01-06 17:12:24,725 [INFO] 127.0.0.1 - b71d3507-68b3-4652-8ab4-f563bf5fa998: Found 10 matching products
+2025-01-06 17:12:24,727 [INFO] 127.0.0.1 - b71d3507-68b3-4652-8ab4-f563bf5fa998: Returning 10 products
+2025-01-06 17:12:26,605 [INFO] 127.0.0.1 - 416ed93d-c73b-4442-8e67-6df0ffff9dc2: Search request - Query: 'Ony', Page: 1, Per page: 20
+2025-01-06 17:12:26,608 [INFO] 127.0.0.1 - 416ed93d-c73b-4442-8e67-6df0ffff9dc2: Found 1 matching products
+2025-01-06 17:12:26,610 [INFO] 127.0.0.1 - 416ed93d-c73b-4442-8e67-6df0ffff9dc2: Returning 1 products
+2025-01-06 17:12:27,163 [INFO] 127.0.0.1 - 35870cba-29f6-41bb-9ef6-5a06e707df36: Search request - Query: 'Onyx', Page: 1, Per page: 20
+2025-01-06 17:12:27,166 [INFO] 127.0.0.1 - 35870cba-29f6-41bb-9ef6-5a06e707df36: Found 1 matching products
+2025-01-06 17:12:27,167 [INFO] 127.0.0.1 - 35870cba-29f6-41bb-9ef6-5a06e707df36: Returning 1 products
+2025-01-06 17:12:29,251 [INFO] 127.0.0.1 - 21b6975f-8b5b-4bd3-982a-7f2f1238725b: Search request - Query: '', Page: 1, Per page: 20
+2025-01-06 17:12:29,252 [INFO] 127.0.0.1 - 21b6975f-8b5b-4bd3-982a-7f2f1238725b: Found 10 matching products
+2025-01-06 17:12:29,253 [INFO] 127.0.0.1 - 21b6975f-8b5b-4bd3-982a-7f2f1238725b: Returning 10 products
+2025-01-06 17:12:32,417 [INFO] 127.0.0.1 - 0fff90f6-5e2d-4389-b191-274bb3edddc9: Search request - Query: 'Beluga', Page: 1, Per page: 20
+2025-01-06 17:12:32,420 [INFO] 127.0.0.1 - 0fff90f6-5e2d-4389-b191-274bb3edddc9: Found 1 matching products
+2025-01-06 17:12:32,422 [INFO] 127.0.0.1 - 0fff90f6-5e2d-4389-b191-274bb3edddc9: Returning 1 products
+2025-01-06 17:12:45,670 [INFO] 127.0.0.1 - 4ca42fe3-b225-447c-a9b4-968e7d30eb54: Favorites request - Method: POST, User ID: 1
+2025-01-06 17:12:45,672 [INFO] 127.0.0.1 - 4ca42fe3-b225-447c-a9b4-968e7d30eb54: POST request data: {'product_id': 2}
+2025-01-06 17:12:49,279 [INFO] 127.0.0.1 - 83fe0b97-3fbd-4d73-b3fe-1163a4de4774: Favorites request - Method: GET, User ID: 1
+2025-01-06 17:12:52,638 [INFO] 127.0.0.1 - 9a19ec7d-3094-496b-947d-5cf851703afa: Favorites request - Method: POST, User ID: 1
+2025-01-06 17:12:52,638 [INFO] 127.0.0.1 - 9a19ec7d-3094-496b-947d-5cf851703afa: POST request data: {'product_id': 2}
+2025-01-06 17:12:52,650 [INFO] 127.0.0.1 - 162f830c-bfc5-4fb7-99ea-b81656ef0fca: Favorites request - Method: GET, User ID: 1
+2025-01-06 17:13:26,743 [INFO] 127.0.0.1 - 543915f3-ea75-4cbc-ab39-2486eb90d113: Profile request for user_id: 1
