@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sneaker_collector/components/retry_button.dart';
+import 'package:sneaker_collector/pages/email_verification.dart';
 import 'package:sneaker_collector/services/api_service.dart';
 import 'package:sneaker_collector/pages/favorites_screen.dart';
 import 'package:sneaker_collector/pages/search_screen.dart';
@@ -24,6 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _initializeApp();
+    _checkEmailVerification();
   }
 
   Future<void> _initializeApp() async {
@@ -100,6 +102,28 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       },
     );
+  }
+
+  void _checkEmailVerification() async {
+    try {
+      final userProfile = await ApiService.getUserProfile();
+      if (!userProfile.isEmailVerified) {
+        if (mounted) {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const EmailVerificationScreen(),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        _showErrorDialog(
+          'Failed to check E-Mail',
+          'Please check your internet connection and try again.'
+        );
+      }
+    }
   }
 
   void _onTabTapped(int index) {

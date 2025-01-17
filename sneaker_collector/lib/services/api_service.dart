@@ -426,4 +426,28 @@ class ApiService {
       (data) => Sneaker.fromJson(data),
     );
   }
+
+  // E-Mail Validation
+  static Future<bool> sendVerificationEmail() async {
+    return _handleResponse(
+      () async => http.post(
+        Uri.parse('$baseUrl/user/send-verification'),
+        headers: await headers,
+      ),
+      (data) => true,
+    );
+  }
+
+  static Future<bool> verifyEmail(String token) async {
+    return _handleResponse(
+      () async => http.post(
+        Uri.parse('$baseUrl/user/verify-email'),
+        headers: await headers,
+        body: json.encode({
+          'token': token,
+        }),
+      ),
+      (data) => true,
+    );
+  }
 }
