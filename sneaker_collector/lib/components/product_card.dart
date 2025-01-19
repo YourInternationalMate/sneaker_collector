@@ -114,8 +114,6 @@ class ProductCard extends StatelessWidget {
                 children: <Widget>[
                   ElevatedButton(
                     onPressed: () {
-                      print('DEBUG: Collection toggle pressed for sneaker: ${sneaker.toString()}');
-                      print('DEBUG: Sneaker details - ID: ${sneaker.id}, Model: ${sneaker.model}, Brand: ${sneaker.brand}');
                       onCollectionToggle!();},
                     style: ElevatedButton.styleFrom(
                       shape: const CircleBorder(),

@@ -1,6 +1,4 @@
-2024-12-23 22:50:41,704 [WARNING] 127.0.0.1 - 654dbcf9-c5bf-4ad0-8f8a-f1979de02bf4: Database error, retrying... (3 attempts left)
-2024-12-23 22:52:10,744 [WARNING] 127.0.0.1 - 26f748e2-28a3-4944-be68-a5199442a068: Database error, retrying... (3 attempts left)
-2024-12-23 22:52:10,744 [ERROR] 127.0.0.1 - 26f748e2-28a3-4944-be68-a5199442a068: Error ID: 90849bd8-20a4-4e2e-a9cc-1eef69b2915c, Status: 500, Message: generator didn't stop after throw()
+2024-12-23 22:53:41,934 [ERROR] 127.0.0.1 - 4707412d-c8ab-4027-8bdd-99657c922446: Error ID: 6b4f8117-aff9-474c-8a27-52db280fe329, Status: 500, Message: generator didn't stop after throw()
 Traceback (most recent call last):
   File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
     self.dialect.do_execute(
@@ -11,9 +9,9 @@ sqlite3.OperationalError: no such column: users.last_login
 The above exception was the direct cause of the following exception:
 
 Traceback (most recent call last):
-  File "/Users/mika/Documents/Workspace/Sneaker Collector/app.py", line 284, in get_db_session
+  File "/Users/mika/Documents/Workspace/Sneaker Collector/app.py", line 304, in get_db_session
     yield session
-  File "/Users/mika/Documents/Workspace/Sneaker Collector/app.py", line 583, in login
+  File "/Users/mika/Documents/Workspace/Sneaker Collector/app.py", line 603, in login
     user = session.query(User).filter_by(username=data['username']).first()
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sqlalchemy/orm/query.py", line 2728, in first
@@ -71,9 +69,42 @@ Traceback (most recent call last):
   File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/flask_limiter/extension.py", line 1303, in __inner
     return cast(R, flask.current_app.ensure_sync(obj)(*a, **k))
                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/mika/Documents/Workspace/Sneaker Collector/app.py", line 582, in login
+  File "/Users/mika/Documents/Workspace/Sneaker Collector/app.py", line 602, in login
     with get_db_session() as session:
   File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/contextlib.py", line 194, in __exit__
     raise RuntimeError("generator didn't stop after throw()")
 RuntimeError: generator didn't stop after throw()
-2024-12-23 22:53:41,933 [WARNING] 127.0.0.1 - 4707412d-c8ab-4027-8bdd-99657c922446: Database error, retrying... (3 attempts left)
+2024-12-23 22:58:31,115 [WARNING] 127.0.0.1 - dbab343b-8bae-439a-b335-e80dcda9acb3: Failed login attempt for username: test
+2024-12-23 23:04:47,793 [INFO] 127.0.0.1 - 42e72e5e-2c25-4b8d-bc8a-98db4d5a1894: New user registered: test
+2024-12-23 23:04:47,822 [ERROR] 127.0.0.1 - d0d974ea-03a1-4139-b7bd-8ee5527ff33e: Error ID: 657ef051-d274-4163-82ab-2e92d98728f1, Status: 404, Message: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/flask/app.py", line 854, in dispatch_request
+    self.raise_routing_exception(req)
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/flask/app.py", line 463, in raise_routing_exception
+    raise request.routing_exception  # type: ignore[misc]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/flask/ctx.py", line 362, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/werkzeug/routing/map.py", line 629, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2024-12-23 23:08:20,278 [ERROR] 127.0.0.1 - 7f6a6998-82d2-480b-a0ea-1d55e29555ba: Error ID: b41ad594-de14-4c7c-9a46-1dbb804c53fa, Status: 404, Message: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/flask/app.py", line 854, in dispatch_request
+    self.raise_routing_exception(req)
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/flask/app.py", line 463, in raise_routing_exception
+    raise request.routing_exception  # type: ignore[misc]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/flask/ctx.py", line 362, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/werkzeug/routing/map.py", line 629, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.

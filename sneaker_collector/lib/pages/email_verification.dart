@@ -48,7 +48,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: const Text(
-          'Email Verification',
+          '"Email Verification"',
           style: TextStyle(
             fontFamily: 'future',
             fontWeight: FontWeight.bold,
@@ -74,17 +74,6 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                 style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  fontFamily: 'future',
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 20),
-              Text(
-                emailSent
-                    ? 'Check your inbox and click the verification link'
-                    : 'To access all features, please verify your email address',
-                style: const TextStyle(
-                  fontSize: 16,
                   fontFamily: 'future',
                 ),
                 textAlign: TextAlign.center,

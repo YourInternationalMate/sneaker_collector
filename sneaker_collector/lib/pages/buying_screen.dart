@@ -216,6 +216,7 @@ class _BuyingScreenState extends State<BuyingScreen> {
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
                       height: 200,
+                      width: 200,
                       color: Colors.grey[200],
                       child: const Icon(Icons.error),
                     );
